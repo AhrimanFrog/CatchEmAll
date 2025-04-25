@@ -1,11 +1,12 @@
 import UIKit
+import SnapKit
 
 class KnowThemAll: UIViewController {
-    private let collection: AllPokemonsCollection
+    private let collection = AllPokemonsCollection()
+    private let backgroundLightningView = UIImageView(image: .lightning)
 
     init() {
-        collection = .init(frame: .zero, collectionViewLayout: .init())
-        super.init()
+        super.init(nibName: nil, bundle: nil)
         configure()
         setConstraints()
     }
@@ -14,7 +15,27 @@ class KnowThemAll: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func configure() {}
+    private func configure() {
+        view.backgroundColor = .systemBackground
+        navigationItem.title = "Know Them All"
+    }
 
-    private func setConstraints() {}
+    private func setConstraints() {
+        view.addSubviews(backgroundLightningView, collection)
+
+        backgroundLightningView.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview()
+            make.leading.equalToSuperview().offset(114)
+            make.height.lessThanOrEqualTo(617)
+        }
+
+        collection.snp.makeConstraints { make in
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalToSuperview().offset(180)
+        }
+    }
+}
+
+#Preview {
+    UINavigationController(rootViewController: KnowThemAll())
 }

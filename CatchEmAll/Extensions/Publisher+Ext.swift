@@ -1,6 +1,6 @@
 import Combine
 
-extension Publisher where Failure == ISNetworkError {
+extension Publisher {
     func sink(resultHandler: @escaping (Result<Output, Failure>) -> Void) -> AnyCancellable {
         return sink(
             receiveCompletion: { completion in

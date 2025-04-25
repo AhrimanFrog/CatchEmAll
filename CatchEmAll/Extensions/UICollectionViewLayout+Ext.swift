@@ -1,7 +1,7 @@
 import UIKit
 
 extension UICollectionViewLayout {
-    static func twoPerRow(padding: CGFloat = 16) -> UICollectionViewFlowLayout {
+    static func vertical(padding: CGFloat = 16) -> UICollectionViewFlowLayout {
         let padding: CGFloat = padding
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical

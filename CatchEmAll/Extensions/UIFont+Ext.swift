@@ -1,11 +1,11 @@
 import UIKit
 
 extension UIFont {
-    enum FontStyle: String {
+    enum FontWeight: String {
         case bold, regular
     }
 
-    static func lato(ofSize: CGFloat, style: FontStyle = .regular) -> UIFont? {
-        return UIFont(name: "Lato-\(style.rawValue.capitalized)", size: ofSize)
+    static func lato(ofSize: CGFloat, weight: FontWeight = .regular) -> UIFont? {
+        return UIFont(name: "Lato-\(weight.rawValue.capitalized)", size: ofSize)
     }
 }
