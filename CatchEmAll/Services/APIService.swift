@@ -1,6 +1,7 @@
 import UIKit
 import Foundation
 import Combine
+import CoreData
 
 class APIService {
     private let decoder = JSONDecoder()
