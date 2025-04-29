@@ -30,7 +30,6 @@ class AllPokemonsCollection: UICollectionView {
     }
 
     private func updateUI(withItems items: [PokemonLight]) {
-        print("UPDATING UI WITH: \(items)")
         var snapshot = NSDiffableDataSourceSnapshot<Int, PokemonLight>()
         snapshot.appendSections([0])
         snapshot.appendItems(items, toSection: 0)

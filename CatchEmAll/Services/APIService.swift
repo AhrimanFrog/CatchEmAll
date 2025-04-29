@@ -14,8 +14,10 @@ class APIService: APIProvider {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
-    func fetchLightPokemons(offset: UInt = 0) -> AnyPublisher<[LightResource], APIError> {
-        return decodedDataPublisher(for: endpoint + "pokemon?offset=\(offset)", decodeToType: [LightResource].self)
+    func fetchLightPokemons(offset: UInt = 0) -> AnyPublisher<LightPokemonResponse, APIError> {
+        return decodedDataPublisher(
+            for: endpoint + "pokemon?offset=\(offset)", decodeToType: LightPokemonResponse.self
+        )
     }
 
     func fetchPokemon(from resource: LightResource) -> AnyPublisher<APIPokemon, APIError> {
@@ -24,11 +26,11 @@ class APIService: APIProvider {
 
     func fetchPokemons(offset: UInt = 0) -> AnyPublisher<[APIPokemon], APIError> {
         return fetchLightPokemons(offset: offset)
-            .flatMap { [weak self] lightPokemons in
+            .flatMap { [weak self] response in
                 guard let self else {
                     return Fail<[APIPokemon], APIError>(error: APIError.badRequest).eraseToAnyPublisher()
                 }
-                return Publishers.MergeMany(lightPokemons.map { self.fetchPokemon(from: $0) })
+                return Publishers.MergeMany(response.results.map { self.fetchPokemon(from: $0) })
                     .collect()
                     .eraseToAnyPublisher()
             }
