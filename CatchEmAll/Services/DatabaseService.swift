@@ -1,2 +1,2 @@
-class DatabaseService {
+class DatabaseService: DBProvider {
 }

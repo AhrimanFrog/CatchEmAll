@@ -3,7 +3,7 @@ import Foundation
 import Combine
 import CoreData
 
-class APIService {
+class APIService: APIProvider {
     private let decoder = JSONDecoder()
     private let endpoint = "https://pokeapi.co/api/v2/"
     private let imagesEndpoint = """
