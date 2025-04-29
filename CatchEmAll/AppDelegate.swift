@@ -4,9 +4,9 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "tst")
-        container.loadPersistentStores { (_, error) in
-            if let error = error as NSError? { fatalError("Unresolved error \(error), \(error.userInfo)") }
+        let container = NSPersistentContainer(name: "CatchEmAll")
+        container.loadPersistentStores { _, error in
+            if let nsError = error as NSError? { fatalError("Unresolved error \(nsError), \(nsError.userInfo)") }
         }
         return container
     }()

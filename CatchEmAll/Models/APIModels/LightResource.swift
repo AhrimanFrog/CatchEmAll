@@ -1,6 +1,8 @@
+import Foundation
+
 struct LightResource: Decodable {
     let name: String
     let url: String
 
-    var id: UInt { UInt(url.split(separator: "/").last ?? "0") ?? 0 }
+    var id: UInt { UInt(NSString(string: url).lastPathComponent) ?? 0 }
 }
