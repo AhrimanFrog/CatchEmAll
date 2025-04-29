@@ -1,7 +1,7 @@
 import CoreData
 
 struct APIPokemon: Decodable {
-    let id: Int
+    let id: UInt
     let name: String
     let height: UInt
     let weight: UInt
@@ -10,6 +10,19 @@ struct APIPokemon: Decodable {
     let moves: [APIMove]
     let stats: [APIStat]
     let species: LightResource
+
+    func toUIPokemon() -> Pokemon { // temporary for demo
+        return .init(
+            id: id,
+            name: name,
+            image: nil,
+            height: height,
+            weight: weight,
+            powers: abilities.map { $0.ability.name },
+            attack: 0,
+            damage: 0
+        )
+    }
 }
 
 extension APIPokemon: Persistable {
@@ -17,6 +30,6 @@ extension APIPokemon: Persistable {
         pokemon.id = Int64(id)
         pokemon.name = name
         pokemon.height = Int16(height)
-        pokemon.weight = Int16(weight)        
+        pokemon.weight = Int16(weight)
     }
 }

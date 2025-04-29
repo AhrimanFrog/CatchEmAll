@@ -1,5 +1,5 @@
 import Combine
 
 protocol DataProvider {
-    func getPokemons(offset: Int) -> AnyPublisher<[Pokemon], Error>
+    func getPokemons(offset: UInt) -> AnyPublisher<[Pokemon], Error>
 }

@@ -22,6 +22,19 @@ class APIService: APIProvider {
         return decodedDataPublisher(for: resource.url, decodeToType: APIPokemon.self)
     }
 
+    func fetchPokemons(offset: UInt = 0) -> AnyPublisher<[APIPokemon], APIError> {
+        return fetchLightPokemons(offset: offset)
+            .flatMap { [weak self] lightPokemons in
+                guard let self else {
+                    return Fail<[APIPokemon], APIError>(error: APIError.badRequest).eraseToAnyPublisher()
+                }
+                return Publishers.MergeMany(lightPokemons.map { self.fetchPokemon(from: $0) })
+                    .collect()
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
     func fetchEvolution() -> AnyPublisher<[Int], APIError> {
         fatalError("Not implemented")
     }
@@ -39,7 +52,10 @@ class APIService: APIProvider {
     ) -> AnyPublisher<T, APIError> {
         return createTaskPublisher(for: query)
             .decode(type: type, decoder: decoder)
-            .mapError { ($0 as? APIError) ?? .badResponse }
+            .mapError {
+                print($0.localizedDescription)
+                return ($0 as? APIError) ?? .invalidData
+            }
             .eraseToAnyPublisher()
     }
 

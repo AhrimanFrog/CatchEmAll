@@ -1,7 +1,6 @@
 import UIKit
 
-struct PokemonLight {
+struct PokemonLight: Hashable {
     let name: String
     let powers: [String]
-    let image: UIImage
 }

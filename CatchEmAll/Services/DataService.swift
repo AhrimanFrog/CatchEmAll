@@ -9,7 +9,10 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
         self.dbProvider = dbProvider
     }
 
-    func getPokemons(offset: Int = 0) -> AnyPublisher<[Pokemon], Error> {
-        return Just([]).setFailureType(to: Error.self).eraseToAnyPublisher()
+    func getPokemons(offset: UInt = 0) -> AnyPublisher<[Pokemon], Error> {
+        return apiProvider.fetchPokemons(offset: offset)
+            .map { result in result.map { $0.toUIPokemon() } }
+            .mapError { $0 as Error } // idk why APIError != any Error
+            .eraseToAnyPublisher()
     }
 }

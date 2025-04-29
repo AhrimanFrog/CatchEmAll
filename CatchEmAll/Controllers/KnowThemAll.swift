@@ -2,10 +2,16 @@ import UIKit
 import SnapKit
 
 class KnowThemAll: UIViewController {
-    private let collection = AllPokemonsCollection()
     private let backgroundLightningView = UIImageView(image: .lightning)
+    private let collection: AllPokemonsCollection
+    private let collectionDataProvider: CollectionItemsProvider
 
-    init() {
+    init(viewModel: CollectionItemsProvider) {
+        let publisher = viewModel.getPokemonForCollection()
+            .replaceError(with: []) // TODO: add error handling
+            .eraseToAnyPublisher()
+        collection = .init(dataPublisher: publisher)
+        collectionDataProvider = viewModel
         super.init(nibName: nil, bundle: nil)
         configure()
         setConstraints()
@@ -34,8 +40,4 @@ class KnowThemAll: UIViewController {
             make.top.equalToSuperview().offset(180)
         }
     }
-}
-
-#Preview {
-    UINavigationController(rootViewController: KnowThemAll())
 }
