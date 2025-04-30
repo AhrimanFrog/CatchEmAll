@@ -11,7 +11,7 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
     override init(frame: CGRect) {
         super.init(frame: .zero)
         setConstraints()
-        backgroundColor = .systemBackground
+        configure()
     }
 
     required init?(coder: NSCoder) {
@@ -37,6 +37,12 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
             .sink { [weak self] pokemonImage in self?.image.image = pokemonImage }
     }
 
+    private func configure() {
+        backgroundColor = .systemBackground
+        image.contentMode = .scaleAspectFit
+        summary.numberOfLines = 0
+    }
+
     private func setConstraints() {
         addSubviews(image, name, summary)
 
@@ -54,9 +60,9 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
 
         summary.snp.makeConstraints { make in
             make.leading.equalTo(name)
-            make.trailing.equalTo(image).offset(-5)
+            make.trailing.equalTo(image.snp.leading).offset(-5)
             make.top.equalTo(name.snp.bottom).offset(6)
-            make.height.lessThanOrEqualTo(13)
+            make.bottom.equalToSuperview().offset(-6)
         }
     }
 }

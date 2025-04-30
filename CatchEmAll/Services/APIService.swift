@@ -59,7 +59,9 @@ class APIService: APIProvider {
     }
 
     private func createTaskPublisher(for query: String) -> AnyPublisher<Data, Error> {
-        guard let url = URL(string: query) else { return Fail(error: APIError.badRequest).eraseToAnyPublisher() }
+        guard let url = URL(string: query.trimmingCharacters(in: .whitespacesAndNewlines)) else {
+            return Fail(error: APIError.badRequest).eraseToAnyPublisher()
+        }
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else { throw APIError.badResponse }
