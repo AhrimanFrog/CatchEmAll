@@ -1,10 +1,12 @@
 import SnapKit
 import UIKit
+import Combine
 
 class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
     private let image = UIImageView()
     private let name = PokemonCellTitleLabel()
     private let summary = TextLabel(style: .secondary)
+    private var imageSubscription: AnyCancellable?
 
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -16,9 +18,23 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        name.text = ""
+        summary.text = ""
+        image.image = nil
+        imageSubscription?.cancel()
+    }
+
     func setPokemon(_ pokemon: PokemonLight) {
         name.text = pokemon.name.capitalized
         summary.text = pokemon.powers.joined(separator: ", ")
+    }
+
+    func subscribeToImage(_ imagePublisher: AnyPublisher<UIImage, Never>) {
+        imageSubscription = imagePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] pokemonImage in self?.image.image = pokemonImage }
     }
 
     private func setConstraints() {

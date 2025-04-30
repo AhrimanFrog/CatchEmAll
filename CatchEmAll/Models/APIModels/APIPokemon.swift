@@ -15,12 +15,11 @@ struct APIPokemon: Decodable {
         return .init(
             id: id,
             name: name,
-            image: nil,
             height: height,
             weight: weight,
             powers: abilities.map { $0.ability.name },
-            attack: 0,
-            damage: 0
+            attack: stats.first { $0.stat.name == "attack" }?.baseStat ?? 0,
+            damage: stats.first { $0.stat.name == "special-attack" }?.baseStat ?? 0
         )
     }
 }

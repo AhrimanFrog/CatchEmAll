@@ -41,10 +41,10 @@ class APIService: APIProvider {
         fatalError("Not implemented")
     }
 
-    func fetchPokemonImage(byID pokemonID: UInt) -> AnyPublisher<UIImage, APIError> {
+    func fetchPokemonImage(byID pokemonID: UInt) -> AnyPublisher<UIImage, Never> {
         return createTaskPublisher(for: imagesEndpoint + "\(pokemonID).png")
             .map { UIImage(data: $0) ?? .pokeball }
-            .mapError { ($0 as? APIError) ?? .badResponse }
+            .replaceError(with: .pokeball)
             .eraseToAnyPublisher()
     }
 
@@ -54,10 +54,7 @@ class APIService: APIProvider {
     ) -> AnyPublisher<T, APIError> {
         return createTaskPublisher(for: query)
             .decode(type: type, decoder: decoder)
-            .mapError {
-                print($0.localizedDescription)
-                return ($0 as? APIError) ?? .invalidData
-            }
+            .mapError { ($0 as? APIError) ?? .invalidData }
             .eraseToAnyPublisher()
     }
 

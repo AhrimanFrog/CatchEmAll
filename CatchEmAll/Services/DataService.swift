@@ -1,4 +1,5 @@
 import Combine
+import UIKit
 
 class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
     private let apiProvider: API
@@ -9,10 +10,14 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
         self.dbProvider = dbProvider
     }
 
-    func getPokemons(offset: UInt = 0) -> AnyPublisher<[Pokemon], Error> {
+    func getPokemons(offset: UInt = 0) -> AnyPublisher<[Pokemon], any Error> {
         return apiProvider.fetchPokemons(offset: offset)
             .map { result in result.map { $0.toUIPokemon() } }
-            .mapError { $0 as Error } // idk why APIError != any Error
+            .mapError { $0 as Error }
             .eraseToAnyPublisher()
+    }
+
+    func getPokemonImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
+        return apiProvider.fetchPokemonImage(byID: id)
     }
 }

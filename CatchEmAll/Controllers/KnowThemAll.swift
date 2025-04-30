@@ -1,17 +1,13 @@
 import UIKit
+import Combine
 import SnapKit
 
 class KnowThemAll: UIViewController {
     private let backgroundLightningView = UIImageView(image: .lightning)
     private let collection: AllPokemonsCollection
-    private let collectionDataProvider: CollectionItemsProvider
 
     init(viewModel: CollectionItemsProvider) {
-        let publisher = viewModel.getPokemonForCollection()
-            .replaceError(with: []) // TODO: add error handling
-            .eraseToAnyPublisher()
-        collection = .init(dataPublisher: publisher)
-        collectionDataProvider = viewModel
+        collection = .init(itemProvider: viewModel)
         super.init(nibName: nil, bundle: nil)
         configure()
         setConstraints()
