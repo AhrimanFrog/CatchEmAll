@@ -41,10 +41,9 @@ class APIService: APIProvider {
         fatalError("Not implemented")
     }
 
-    func fetchPokemonImage(byID pokemonID: UInt) -> AnyPublisher<UIImage, Never> {
+    func fetchPokemonImage(byID pokemonID: UInt) -> AnyPublisher<Data, Never> {
         return createTaskPublisher(for: imagesEndpoint + "\(pokemonID).png")
-            .map { UIImage(data: $0) ?? .pokeball }
-            .replaceError(with: .pokeball)
+            .replaceError(with: Data())
             .eraseToAnyPublisher()
     }
 

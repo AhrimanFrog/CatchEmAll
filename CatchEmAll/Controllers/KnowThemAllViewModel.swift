@@ -19,5 +19,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
 
     func getPokemonImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
         return dataProvider.getPokemonImage(byID: id)
+            .map { UIImage(data: $0) ?? .pokeball }
+            .eraseToAnyPublisher()
     }
 }

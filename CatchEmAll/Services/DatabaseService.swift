@@ -16,19 +16,16 @@ class DatabaseService: DBProvider {
         imagesDir = documentsURL?.appending(path: "images")
     }
 
-    func preserveImage(_ image: UIImage, withID imageId: UInt) {
+    func preserveImage(_ imageData: Data, withID imageId: UInt) {
         queue.async { [imagesDir] in
-            guard let imageData = image.pngData(), let imagesDir else { return }
+            guard let imagesDir else { return }
             try? imageData.write(to: imagesDir.appending(path: "\(imageId).png"))
         }
     }
 
-    func retrieveImage(byID imageID: UInt) -> UIImage? {
+    func retrieveImage(byID imageID: UInt) -> Data? {
         guard let imagesDir else { return nil }
         let filePath = imagesDir.appending(path: "\(imageID).png").path()
-        if fileManager.fileExists(atPath: filePath) {
-            return UIImage(contentsOfFile: filePath)
-        }
-        return nil
+        return fileManager.contents(atPath: filePath)
     }
 }

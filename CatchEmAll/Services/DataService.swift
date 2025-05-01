@@ -17,11 +17,11 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
             .eraseToAnyPublisher()
     }
 
-    func getPokemonImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
-        if let pokemonImage = dbProvider.retrieveImage(byID: id) {
-            return Just(pokemonImage).eraseToAnyPublisher()
+    func getPokemonImage(byID id: UInt) -> AnyPublisher<Data, Never> {
+        if let pokemonImageData = dbProvider.retrieveImage(byID: id) {
+            return Just(pokemonImageData).replaceNil(with: Data()).eraseToAnyPublisher()
         }
-        return apiProvider.fetchPokemonImage(byID: id)
+        return apiProvider.fetchPokemonImage(byID: id)  // swiftlint:disable:next trailing_closure
             .handleEvents(receiveOutput: { [weak self] in self?.dbProvider.preserveImage($0, withID: id) })
             .eraseToAnyPublisher()
     }
