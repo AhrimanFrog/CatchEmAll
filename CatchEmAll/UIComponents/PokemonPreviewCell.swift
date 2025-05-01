@@ -41,6 +41,10 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         backgroundColor = .systemBackground
         image.contentMode = .scaleAspectFit
         summary.numberOfLines = 0
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowRadius = 2
+        layer.shadowOpacity = 1
+        layer.shadowOffset = .zero
     }
 
     private func setConstraints() {

@@ -18,6 +18,11 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
     }
 
     func getPokemonImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
+        if let pokemonImage = dbProvider.retrieveImage(byID: id) {
+            return Just(pokemonImage).eraseToAnyPublisher()
+        }
         return apiProvider.fetchPokemonImage(byID: id)
+            .handleEvents(receiveOutput: { [weak self] in self?.dbProvider.preserveImage($0, withID: id) })
+            .eraseToAnyPublisher()
     }
 }

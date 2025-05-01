@@ -8,7 +8,7 @@ class APIService: APIProvider {
     private let endpoint = "https://pokeapi.co/api/v2/"
     private let imagesEndpoint = """
         https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/
-    """
+    """.trimmingCharacters(in: .whitespacesAndNewlines)
 
     init() {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
@@ -59,9 +59,7 @@ class APIService: APIProvider {
     }
 
     private func createTaskPublisher(for query: String) -> AnyPublisher<Data, Error> {
-        guard let url = URL(string: query.trimmingCharacters(in: .whitespacesAndNewlines)) else {
-            return Fail(error: APIError.badRequest).eraseToAnyPublisher()
-        }
+        guard let url = URL(string: query) else { return Fail(error: APIError.badRequest).eraseToAnyPublisher() }
         return URLSession.shared.dataTaskPublisher(for: url)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else { throw APIError.badResponse }
