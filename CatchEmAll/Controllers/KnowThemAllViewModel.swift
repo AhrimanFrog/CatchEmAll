@@ -22,7 +22,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
                 case .success(let pokemon): self?.items.value.append(contentsOf: pokemon)
                 case .failure(let error): self?.onErrorOccur?(error)
                 }
-                self?.offset += 35
+                self?.offset += 36
             }
             .store(in: &subscriptions)
     }

@@ -6,6 +6,7 @@ class AllPokemonsCollection: UICollectionView {
     private var cachedCellWidth: Double?
     private var itemProvider: CollectionItemsProvider
     private var dataSubscription: AnyCancellable?
+    private var awaitingNewItems = false
 
     init(itemProvider: CollectionItemsProvider) {
         self.itemProvider = itemProvider
@@ -17,7 +18,10 @@ class AllPokemonsCollection: UICollectionView {
         dataSubscription = itemProvider.items
             .dropFirst()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in self?.updateUI(withItems: $0) }
+            .sink { [weak self] in
+                self?.awaitingNewItems = false
+                self?.updateUI(withItems: $0)
+            }
     }
 
     required init?(coder: NSCoder) {
@@ -67,7 +71,9 @@ extension AllPokemonsCollection: UICollectionViewDelegate {
         let contentHeight = scrollView.contentSize.height
         let viewHeight = scrollView.frame.size.height
 
-        guard offsetY > (contentHeight - viewHeight) else { return }
+        guard !awaitingNewItems && offsetY > (contentHeight - viewHeight) else { return }
+        scrollView.stopScrollingAndZooming()
+        awaitingNewItems = true
         itemProvider.fetchItems()
     }
 }

@@ -39,7 +39,7 @@ class APIService: APIProvider {
 
     private func fetchLightPokemons(offset: UInt) -> AnyPublisher<LightPokemonResponse, APIError> {
         return decodedDataPublisher(
-            for: endpoint + "pokemon?offset=\(offset)&limit=35", decodeToType: LightPokemonResponse.self
+            for: endpoint + "pokemon?offset=\(offset)&limit=36", decodeToType: LightPokemonResponse.self
         )
     }
 
