@@ -14,8 +14,8 @@ class AllPokemonsCollection: UICollectionView {
         register(PokemonPreviewCell.self)
         delegate = self
         backgroundColor = .clear
-        dataSubscription = itemProvider.getPokemonForCollection()
-            .replaceError(with: [])
+        dataSubscription = itemProvider.items
+            .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.updateUI(withItems: $0) }
     }
@@ -28,7 +28,7 @@ class AllPokemonsCollection: UICollectionView {
         diffDataSource = .init(collectionView: self) { [itemProvider] collectionView, indexPath, pokemon in
             return collectionView.deque(PokemonPreviewCell.self, for: indexPath) { cell in
                 cell.setPokemon(pokemon)
-                cell.subscribeToImage(itemProvider.getPokemonImage(byID: pokemon.id))
+                cell.subscribeToImage(itemProvider.getCellImage(byID: pokemon.id))
             }
         }
     }
@@ -58,5 +58,16 @@ extension AllPokemonsCollection: UICollectionViewDelegateFlowLayout {
         let width = (collectionWidth - horizontalPadding - interitemSpacing) / 2
         cachedCellWidth = width
         return .init(width: width, height: width * 0.675)
+    }
+}
+
+extension AllPokemonsCollection: UICollectionViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let offsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let viewHeight = scrollView.frame.size.height
+
+        guard offsetY > (contentHeight - viewHeight) else { return }
+        itemProvider.fetchItems()
     }
 }

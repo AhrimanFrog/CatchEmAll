@@ -19,7 +19,7 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
 
     func getPokemonImage(byID id: UInt) -> AnyPublisher<Data, Never> {
         if let pokemonImageData = dbProvider.retrieveImage(byID: id) {
-            return Just(pokemonImageData).replaceNil(with: Data()).eraseToAnyPublisher()
+            return Just(pokemonImageData).eraseToAnyPublisher()
         }
         return apiProvider.fetchPokemonImage(byID: id)  // swiftlint:disable:next trailing_closure
             .handleEvents(receiveOutput: { [weak self] in self?.dbProvider.preserveImage($0, withID: id) })
