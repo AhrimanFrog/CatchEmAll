@@ -33,7 +33,6 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
     }
 
     func getCellImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
-        print("REQUESTING IMAGE FOR ID: \(id)")
         return dataProvider.getPokemonImage(byID: id)
             .map { UIImage(data: $0) ?? .pokeball }
             .eraseToAnyPublisher()
