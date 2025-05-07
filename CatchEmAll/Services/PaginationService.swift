@@ -1,21 +1,14 @@
 class PaginationService {
-    struct Pagination: Equatable {
-        var offset: UInt = 0
-        let limit: UInt = 36
-
-        var next: Pagination { .init(offset: offset + limit) }
-    }
-
-    var current: Pagination = .init()
+    private(set) var offset: UInt = 0
+    let limit: UInt = 36
 
     func shouldRequestMore(for index: UInt) -> Bool {
-        let threeQuartersOfRequest = current.offset + current.limit / 4 * 3
+        let threeQuartersOfRequest = offset + limit / 4 * 3
         return index >= threeQuartersOfRequest
     }
 
-    func moveForward(withCall callback: (Pagination) -> Void) {
-        let next = current.next
-        callback(next)
-        current = next
+    func moveForward(withCall callback: ((offset: UInt, limit: UInt)) -> Void) {
+        offset += limit
+        callback((offset, limit))
     }
 }

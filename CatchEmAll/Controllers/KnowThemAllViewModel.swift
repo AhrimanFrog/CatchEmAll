@@ -11,16 +11,16 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
 
     init(dataProvider: DP) {
         self.dataProvider = dataProvider
-        fetchItems(with: paginationService.current)
+        fetchItems(offset: paginationService.offset, limit: paginationService.limit)
     }
 
     func updateDataIfNeeded(with itemID: UInt) {
         guard paginationService.shouldRequestMore(for: itemID) else { return }
-        paginationService.moveForward { [weak self] in self?.fetchItems(with: $0) }
+        paginationService.moveForward { [weak self] in self?.fetchItems(offset: $0.offset, limit: $0.limit) }
     }
 
-    func fetchItems(with pagination: PaginationService.Pagination) {
-        dataProvider.getPokemons(offset: pagination.offset, limit: pagination.limit)
+    private func fetchItems(offset: UInt, limit: UInt) {
+        dataProvider.getPokemons(offset: offset, limit: limit)
             .mapError { $0 as Error }
             .map { $0.map { pokemon in pokemon.light() }.sorted { $0.id < $1.id } }
             .sink { [weak self] result in
