@@ -11,7 +11,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
 
     init(dataProvider: DP) {
         self.dataProvider = dataProvider
-        paginationService.moveForward { [weak self] in self?.fetchItems(with: $0) }
+        fetchItems(with: paginationService.current)
     }
 
     func updateDataIfNeeded(with itemID: UInt) {
