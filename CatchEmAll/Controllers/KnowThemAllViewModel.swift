@@ -3,7 +3,7 @@ import UIKit
 
 class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
     private let dataProvider: DP
-    private var offset: UInt = 0
+    private let paginationService = PaginationService() // temp
     private var subscriptions = Set<AnyCancellable>()
 
     let items: CurrentValueSubject<[PokemonLight], Never> = .init([])
@@ -11,23 +11,29 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
 
     init(dataProvider: DP) {
         self.dataProvider = dataProvider
+        paginationService.moveForward { [weak self] in self?.fetchItems(with: $0) }
     }
 
-    func fetchItems() {
-        dataProvider.getPokemons(offset: offset)
+    func updateDataIfNeeded(with itemID: UInt) {
+        guard paginationService.shouldRequestMore(for: itemID) else { return }
+        paginationService.moveForward { [weak self] in self?.fetchItems(with: $0) }
+    }
+
+    func fetchItems(with pagination: PaginationService.Pagination) {
+        dataProvider.getPokemons(offset: pagination.offset, limit: pagination.limit)
             .mapError { $0 as Error }
-            .map { $0.map { pokemon in pokemon.light() } }
+            .map { $0.map { pokemon in pokemon.light() }.sorted { $0.id < $1.id } }
             .sink { [weak self] result in
                 switch result {
                 case .success(let pokemon): self?.items.value.append(contentsOf: pokemon)
                 case .failure(let error): self?.onErrorOccur?(error)
                 }
-                self?.offset += 36
             }
             .store(in: &subscriptions)
     }
 
     func getCellImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
+        print("REQUESTING IMAGE FOR ID: \(id)")
         return dataProvider.getPokemonImage(byID: id)
             .map { UIImage(data: $0) ?? .pokeball }
             .eraseToAnyPublisher()

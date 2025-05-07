@@ -10,8 +10,8 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
         self.dbProvider = dbProvider
     }
 
-    func getPokemons(offset: UInt = 0) -> AnyPublisher<[Pokemon], any Error> {
-        return apiProvider.fetchPokemons(offset: offset)
+    func getPokemons(offset: UInt, limit: UInt) -> AnyPublisher<[Pokemon], any Error> {
+        return apiProvider.fetchPokemons(offset: offset, limit: limit)
             .map { result in result.map { $0.toUIPokemon() } }
             .mapError { $0 as Error }
             .eraseToAnyPublisher()

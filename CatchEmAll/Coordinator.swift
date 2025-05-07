@@ -19,6 +19,7 @@ class Coordinator {
                 dbProvider: DatabaseService(dbContext: Coordinator.persistentContainer.viewContext)
             )
         )
+
         navigationController = .init(rootViewController: KnowThemAll(viewModel: viewModel))
         configureNavigationController()
     }

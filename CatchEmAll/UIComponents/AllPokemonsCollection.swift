@@ -6,7 +6,6 @@ class AllPokemonsCollection: UICollectionView {
     private var cachedCellWidth: Double?
     private var itemProvider: CollectionItemsProvider
     private var dataSubscription: AnyCancellable?
-    private var awaitingNewItems = false
 
     init(itemProvider: CollectionItemsProvider) {
         self.itemProvider = itemProvider
@@ -18,10 +17,7 @@ class AllPokemonsCollection: UICollectionView {
         dataSubscription = itemProvider.items
             .dropFirst()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.awaitingNewItems = false
-                self?.updateUI(withItems: $0)
-            }
+            .sink { [weak self] in self?.updateUI(withItems: $0) }
     }
 
     required init?(coder: NSCoder) {
@@ -29,10 +25,11 @@ class AllPokemonsCollection: UICollectionView {
     }
 
     private func initDataSource() {
-        diffDataSource = .init(collectionView: self) { [itemProvider] collectionView, indexPath, pokemon in
-            return collectionView.deque(PokemonPreviewCell.self, for: indexPath) { cell in
+        diffDataSource = .init(collectionView: self) { [itemProvider] collection, index, pokemon in
+            return collection.deque(PokemonPreviewCell.self, for: index) { cell in
                 cell.setPokemon(pokemon)
                 cell.subscribeToImage(itemProvider.getCellImage(byID: pokemon.id))
+                itemProvider.updateDataIfNeeded(with: pokemon.id)
             }
         }
     }
@@ -62,18 +59,5 @@ extension AllPokemonsCollection: UICollectionViewDelegateFlowLayout {
         let width = (collectionWidth - horizontalPadding - interitemSpacing) / 2
         cachedCellWidth = width
         return .init(width: width, height: width * 0.675)
-    }
-}
-
-extension AllPokemonsCollection: UICollectionViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let offsetY = scrollView.contentOffset.y
-        let contentHeight = scrollView.contentSize.height
-        let viewHeight = scrollView.frame.size.height
-
-        guard !awaitingNewItems && offsetY > (contentHeight - viewHeight) else { return }
-        scrollView.stopScrollingAndZooming()
-        awaitingNewItems = true
-        itemProvider.fetchItems()
     }
 }

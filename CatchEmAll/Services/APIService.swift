@@ -14,8 +14,8 @@ class APIService: APIProvider {
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
-    func fetchPokemons(offset: UInt = 0) -> AnyPublisher<[APIPokemon], APIError> {
-        return fetchLightPokemons(offset: offset)
+    func fetchPokemons(offset: UInt, limit: UInt) -> AnyPublisher<[APIPokemon], APIError> {
+        return fetchLightPokemons(offset: offset, limit: limit)
             .flatMap { [weak self] response in
                 guard let self else {
                     return Fail<[APIPokemon], APIError>(error: APIError.badRequest).eraseToAnyPublisher()
@@ -37,9 +37,9 @@ class APIService: APIProvider {
             .eraseToAnyPublisher()
     }
 
-    private func fetchLightPokemons(offset: UInt) -> AnyPublisher<LightPokemonResponse, APIError> {
+    private func fetchLightPokemons(offset: UInt, limit: UInt) -> AnyPublisher<LightPokemonResponse, APIError> {
         return decodedDataPublisher(
-            for: endpoint + "pokemon?offset=\(offset)&limit=36", decodeToType: LightPokemonResponse.self
+            for: endpoint + "pokemon?offset=\(offset)&limit=\(limit)", decodeToType: LightPokemonResponse.self
         )
     }
 
