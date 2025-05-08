@@ -6,8 +6,8 @@ class KnowThemAll: UIViewController {
     private let backgroundLightningView = UIImageView(image: .lightning)
     private let collection: AllPokemonsCollection
 
-    init(viewModel: CollectionItemsProvider) {
-        collection = .init(itemProvider: viewModel)
+    init(itemProvider: CollectionItemsProvider) {
+        collection = .init(itemProvider: itemProvider)
         super.init(nibName: nil, bundle: nil)
         configure()
         setConstraints()
@@ -25,15 +25,15 @@ class KnowThemAll: UIViewController {
     private func setConstraints() {
         view.addSubviews(backgroundLightningView, collection)
 
+        collection.snp.makeConstraints { make in
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
+        }
+
         backgroundLightningView.snp.makeConstraints { make in
             make.top.trailing.equalToSuperview()
             make.leading.equalToSuperview().offset(114)
-            make.height.lessThanOrEqualTo(617)
-        }
-
-        collection.snp.makeConstraints { make in
-            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
-            make.top.equalToSuperview().offset(180)
+            make.bottom.lessThanOrEqualTo(collection).offset(16)
         }
     }
 }

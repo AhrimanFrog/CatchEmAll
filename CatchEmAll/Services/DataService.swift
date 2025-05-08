@@ -11,7 +11,13 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
     }
 
     func getPokemons(offset: UInt, limit: UInt) -> AnyPublisher<[Pokemon], any Error> {
+        if let dbPokemon = dbProvider.retrievePokemon(offset: offset, limit: limit) {
+            print(dbPokemon)
+        }
         return apiProvider.fetchPokemons(offset: offset, limit: limit)
+            .handleEvents(receiveOutput: { [weak self] apiPokemon in
+                apiPokemon.forEach { self?.dbProvider.preservePokemon($0) }
+            })
             .map { result in result.map { $0.toUIPokemon() } }
             .mapError { $0 as Error }
             .eraseToAnyPublisher()
@@ -21,7 +27,7 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
         if let pokemonImageData = dbProvider.retrieveImage(byID: id) {
             return Just(pokemonImageData).eraseToAnyPublisher()
         }
-        return apiProvider.fetchPokemonImage(byID: id)  // swiftlint:disable:next trailing_closure
+        return apiProvider.fetchPokemonImage(byID: id)
             .handleEvents(receiveOutput: { [weak self] in self?.dbProvider.preserveImage($0, withID: id) })
             .eraseToAnyPublisher()
     }
