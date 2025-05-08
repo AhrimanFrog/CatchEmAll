@@ -15,7 +15,6 @@ class AllPokemonsCollection: UICollectionView {
         delegate = self
         backgroundColor = .clear
         dataSubscription = itemProvider.items
-            .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.updateUI(withItems: $0) }
     }

@@ -28,6 +28,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
 
     init(dataProvider: DP) {
         self.dataProvider = dataProvider
+        onErrorOccur = { print($0.localizedDescription) }
         bind()
         paginationService.requestMoreIfNeeded(for: 0)
     }
@@ -44,7 +45,6 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
                         receiveSubscription: { [weak self] _ in self?.isLoading = true },
                         receiveCompletion: { [weak self] _ in self?.isLoading = false }
                     )
-                    .mapError { $0 as Error }
                     .map { .success($0.map { pokemon in pokemon.light() }.sorted { $0.id < $1.id }) }
                     .catch { error in Just(.failure(error)) }
                     .eraseToAnyPublisher()

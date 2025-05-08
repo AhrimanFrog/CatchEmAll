@@ -3,14 +3,13 @@ import CoreData
 import Combine
 
 class DatabaseService: DBProvider {
-    private let dbQueue = DispatchQueue(label: "storage.queue", attributes: .concurrent)
     private let imageQueue = DispatchQueue(label: "image.queue", attributes: .concurrent)
     private let fileManager: FileManager
     private let dbContext: NSManagedObjectContext
     private let imagesDir: URL
 
-    init(dbContext: NSManagedObjectContext, fileManager: FileManager = .default) {
-        self.dbContext = dbContext
+    init(container: NSPersistentContainer, fileManager: FileManager = .default) {
+        self.dbContext = container.newBackgroundContext()
         self.fileManager = fileManager
 
         let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -32,7 +31,7 @@ class DatabaseService: DBProvider {
     }
 
     func preservePokemon(_ pokemon: APIPokemon) {
-        dbQueue.async { [weak self] in
+        dbContext.perform { [weak self] in
             guard let self else { return }
 
             let dbPokemon = DBPokemon(context: dbContext)
@@ -58,12 +57,19 @@ class DatabaseService: DBProvider {
                 dbStat.addToPokemon(dbPokemon)
             }
 
+            for apiAbility in pokemon.abilities {
+                let dbAbility = DBAbility(context: dbContext)
+                dbAbility.id = Int64(apiAbility.ability.id)
+                dbAbility.name = apiAbility.ability.name
+                dbAbility.addToPokemon(dbPokemon)
+            }
+
             saveContext()
         }
     }
 
     func retrievePokemon(offset: UInt, limit: UInt) -> [DBPokemon]? {
-        dbQueue.sync {
+        dbContext.performAndWait {
             let request = DBPokemon.fetchRequest()
             request.fetchLimit = Int(limit)
             request.fetchOffset = Int(offset)

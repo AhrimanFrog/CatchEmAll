@@ -1,4 +1,5 @@
-import UIKit
+import Combine
+import Foundation
 
 protocol DBProvider {
     func preservePokemon(_ pokemon: APIPokemon)

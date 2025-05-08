@@ -16,7 +16,7 @@ class Coordinator {
         let viewModel = KnowThemAllViewModel(
             dataProvider: DataService(
                 apiProvider: APIService(),
-                dbProvider: DatabaseService(dbContext: Coordinator.persistentContainer.viewContext)
+                dbProvider: DatabaseService(container: Coordinator.persistentContainer)
             )
         )
         navigationController = .init(rootViewController: KnowThemAll(itemProvider: viewModel))

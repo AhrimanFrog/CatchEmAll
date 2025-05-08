@@ -11,8 +11,10 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
     }
 
     func getPokemons(offset: UInt, limit: UInt) -> AnyPublisher<[Pokemon], any Error> {
-        if let dbPokemon = dbProvider.retrievePokemon(offset: offset, limit: limit) {
-            print(dbPokemon)
+        if let dbPokemon = dbProvider.retrievePokemon(offset: offset, limit: limit), !dbPokemon.isEmpty {
+            return Just(dbPokemon.map { Pokemon.fromDBData($0) })
+                .setFailureType(to: Error.self)
+                .eraseToAnyPublisher()
         }
         return apiProvider.fetchPokemons(offset: offset, limit: limit)
             .handleEvents(receiveOutput: { [weak self] apiPokemon in
