@@ -22,4 +22,16 @@ struct Pokemon {
             damage: UInt(dbPokemon.damage)
         )
     }
+
+    static func fromAPIData(_ apiPokemon: APIPokemon) -> Pokemon {
+        return .init(
+            id: apiPokemon.id,
+            name: apiPokemon.name,
+            height: apiPokemon.height,
+            weight: apiPokemon.weight,
+            powers: apiPokemon.abilities.map { $0.ability.name },
+            attack: apiPokemon.attack,
+            damage: apiPokemon.damage
+        )
+    }
 }

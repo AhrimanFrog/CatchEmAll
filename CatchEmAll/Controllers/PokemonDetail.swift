@@ -1,0 +1,47 @@
+import SnapKit
+import UIKit
+
+class PokemonDetail: UIViewController {
+    private let name = UILabel()
+    private let image = UIImageView(image: .pokeball)
+    private let segmentedControl = UISegmentedControl()
+    private let infoTable = UITableView()
+
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        configure()
+        setConstraints()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    private func configure() {
+        image.contentMode = .scaleAspectFit
+    }
+
+    private func setConstraints() {
+        view.addSubviews(name, image, segmentedControl, infoTable)
+        name.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(95)
+            make.height.lessThanOrEqualTo(29)
+        }
+        image.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(15)
+            make.top.equalTo(name.snp.bottom).offset(40)
+            make.height.lessThanOrEqualTo(200)
+        }
+        segmentedControl.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.top.equalTo(image.snp.bottom).offset(20)
+            make.height.lessThanOrEqualTo(24)
+        }
+        infoTable.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview().inset(37)
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
+            make.top.equalTo(segmentedControl.snp.bottom).offset(13)
+        }
+    }
+}

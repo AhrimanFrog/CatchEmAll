@@ -18,7 +18,7 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
                     .handleEvents(receiveOutput: { [weak self] apiPokemon in
                         apiPokemon.forEach { self?.dbProvider.preservePokemon($0) }
                     })
-                    .map { result in result.map { $0.toUIPokemon() } }
+                    .map { result in result.map { Pokemon.fromAPIData($0) } }
                     .mapError { $0 as Error }
                     .eraseToAnyPublisher()
             }

@@ -1,0 +1,4 @@
+import Combine
+
+class PokemonDetailViewModel {
+}

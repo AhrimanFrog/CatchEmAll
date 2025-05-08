@@ -27,7 +27,7 @@ class KnowThemAll: UIViewController {
 
         collection.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(40)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(20)
         }
 
         backgroundLightningView.snp.makeConstraints { make in
