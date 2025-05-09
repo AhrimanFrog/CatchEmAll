@@ -24,6 +24,7 @@ class PokemonDetail: UIViewController {
     private func configure() {
         image.contentMode = .scaleAspectFit
         view.backgroundColor = .systemBackground
+        navigationItem.backButtonTitle = ""
     }
 
     private func setConstraints() {

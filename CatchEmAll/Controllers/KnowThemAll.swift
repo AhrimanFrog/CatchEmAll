@@ -20,6 +20,7 @@ class KnowThemAll: UIViewController {
     private func configure() {
         view.backgroundColor = .systemBackground
         navigationItem.title = "Know Them All"
+        navigationItem.backButtonTitle = ""
     }
 
     private func setConstraints() {

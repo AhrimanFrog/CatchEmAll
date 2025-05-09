@@ -69,8 +69,8 @@ class Coordinator {
         navigationController.navigationBar.titleTextAttributes = [
             .font: UIFont.lato(ofSize: 24, weight: .bold)!
         ]
-        navigationController.navigationBar.backItem?.title = ""
-        navigationController.navigationBar.backIndicatorImage = .init(systemName: "arrow.left")
         navigationController.navigationBar.tintColor = .label
+        navigationController.navigationBar.backIndicatorTransitionMaskImage = .init(systemName: "arrow.left")
+        navigationController.navigationBar.backIndicatorImage = .init(systemName: "arrow.left")
     }
 }
