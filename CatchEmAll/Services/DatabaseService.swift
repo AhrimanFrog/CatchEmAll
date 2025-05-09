@@ -77,12 +77,28 @@ class DatabaseService: DBProvider {
 
     func retrievePokemon(offset: UInt, limit: UInt) -> AnyPublisher<[DBPokemon], DBError> {
         Future { [weak self] promise in
-            self?.dbFgContext.performAndWait { [weak self] in
+            self?.dbFgContext.perform { [weak self] in
                 guard let self else { return promise(.failure(.expired)) }
                 let request = DBPokemon.fetchRequest()
                 request.fetchLimit = Int(limit)
                 request.fetchOffset = Int(offset)
                 guard let pokemon = try? dbFgContext.fetch(request), !pokemon.isEmpty else {
+                    return promise(.failure(.notFound))
+                }
+                return promise(.success(pokemon))
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
+    func retrievePokemon(byID pokemonID: UInt) -> AnyPublisher<DBPokemon, DBError> {
+        Future { [weak self] promise in
+            self?.dbFgContext.perform { [weak self] in
+                guard let self else { return promise(.failure(.expired)) }
+                let request = DBPokemon.fetchRequest()
+                request.fetchLimit = 1
+                request.predicate = .init(format: "id == %@", pokemonID)
+                guard let pokemon = try? dbFgContext.fetch(request).first else {
                     return promise(.failure(.notFound))
                 }
                 return promise(.success(pokemon))

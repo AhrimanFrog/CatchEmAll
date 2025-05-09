@@ -2,7 +2,7 @@ import Foundation
 
 struct LightResource: Decodable {
     let name: String
-    let url: String
+    let url: URL
 
-    var id: UInt { UInt(NSString(string: url).lastPathComponent) ?? 0 }
+    var id: UInt { UInt(url.lastPathComponent) ?? 0 }
 }

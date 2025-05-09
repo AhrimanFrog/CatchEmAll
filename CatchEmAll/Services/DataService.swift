@@ -12,16 +12,22 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
 
     func getPokemons(offset: UInt, limit: UInt) -> AnyPublisher<[Pokemon], any Error> {
         return dbProvider.retrievePokemon(offset: offset, limit: limit)
-            .map { result in result.map { Pokemon.fromDBData($0) } }
+            .map { result in result.map(Pokemon.fromDBData) }
             .catch { [apiProvider] _ in
                 apiProvider.fetchPokemons(offset: offset, limit: limit)
                     .handleEvents(receiveOutput: { [weak self] apiPokemon in
                         apiPokemon.forEach { self?.dbProvider.preservePokemon($0) }
                     })
-                    .map { result in result.map { Pokemon.fromAPIData($0) } }
+                    .map { result in result.map(Pokemon.fromAPIData) }
                     .mapError { $0 as Error }
                     .eraseToAnyPublisher()
             }
+            .eraseToAnyPublisher()
+    }
+
+    func getPokemon(byID pokemonID: UInt) -> AnyPublisher<Pokemon, DBError> {
+        return dbProvider.retrievePokemon(byID: pokemonID)
+            .map(Pokemon.fromDBData(_:))
             .eraseToAnyPublisher()
     }
 

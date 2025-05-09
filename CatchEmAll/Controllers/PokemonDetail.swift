@@ -7,8 +7,12 @@ class PokemonDetail: UIViewController {
     private let segmentedControl = UISegmentedControl()
     private let infoTable = UITableView()
 
-    init() {
+    private let viewModel: PokemonDetailViewModel
+
+    init(viewModel: PokemonDetailViewModel, pokemonImage: UIImage) {
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        image.image = pokemonImage
         configure()
         setConstraints()
     }

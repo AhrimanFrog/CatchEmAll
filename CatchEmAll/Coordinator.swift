@@ -2,9 +2,16 @@ import UIKit
 import CoreData
 
 class Coordinator {
-    let navigationController: UINavigationController
+    enum Screen {
+        case start
+        case detail(UIImage, UInt)
+    }
 
-    static var persistentContainer: NSPersistentContainer = {
+    let navigationController = UINavigationController()
+    private let dataService: DataService<APIService, DatabaseService>
+    private var startingController: UIViewController?
+
+    private var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "CatchEmAll")
         container.loadPersistentStores { _, error in
             if let nsError = error as NSError? { fatalError("Unresolved error \(nsError), \(nsError.userInfo)") }
@@ -13,14 +20,32 @@ class Coordinator {
     }()
 
     init() {
-        let viewModel = KnowThemAllViewModel(
-            dataProvider: DataService(
-                apiProvider: APIService(),
-                dbProvider: DatabaseService(container: Coordinator.persistentContainer)
-            )
+        dataService = DataService(
+            apiProvider: APIService(),
+            dbProvider: DatabaseService(container: persistentContainer)
         )
-        navigationController = .init(rootViewController: KnowThemAll(itemProvider: viewModel))
         configureNavigationController()
+    }
+
+    func start() {
+        let viewModel = KnowThemAllViewModel(dataProvider: dataService)
+        let knowThemAll = KnowThemAll(itemProvider: viewModel)
+        navigationController.setViewControllers([knowThemAll], animated: true)
+        startingController = knowThemAll
+    }
+
+    func navigate(toScreen screen: Screen) {
+        switch screen {
+        case .start:
+            guard let startingController else { return }
+            navigationController.popToViewController(startingController, animated: true)
+        case let .detail(image, pokemonID):
+            let viewModel = PokemonDetailViewModel(dataService: dataService, pokemonID: pokemonID)
+            navigationController.pushViewController(
+                PokemonDetail(viewModel: viewModel, pokemonImage: image),
+                animated: true
+            )
+        }
     }
 
     private func configureNavigationController() {
