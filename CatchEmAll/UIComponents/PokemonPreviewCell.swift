@@ -3,10 +3,12 @@ import UIKit
 import Combine
 
 class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
-    private let image = UIImageView()
+    let image = UIImageView()
     private let name = PokemonCellTitleLabel()
     private let summary = TextLabel(style: .secondary)
     private var imageSubscription: AnyCancellable?
+
+    var onTouch: ((UIImage) -> Void)?
 
     override init(frame: CGRect) {
         super.init(frame: .zero)
@@ -23,6 +25,7 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         name.text = ""
         summary.text = ""
         image.image = nil
+        onTouch = nil
         imageSubscription?.cancel()
     }
 
@@ -45,6 +48,11 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         layer.shadowRadius = 2
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        onTouch?(image.image ?? .pokeball)
     }
 
     private func setConstraints() {

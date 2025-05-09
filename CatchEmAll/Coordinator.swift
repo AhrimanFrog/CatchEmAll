@@ -28,7 +28,10 @@ class Coordinator {
     }
 
     func start() {
-        let viewModel = KnowThemAllViewModel(dataProvider: dataService)
+        let viewModel = KnowThemAllViewModel(
+            dataProvider: dataService,
+            navigationDispatcher: newNavigationDispatcher()
+        )
         let knowThemAll = KnowThemAll(itemProvider: viewModel)
         navigationController.setViewControllers([knowThemAll], animated: true)
         startingController = knowThemAll
@@ -46,6 +49,19 @@ class Coordinator {
                 animated: true
             )
         }
+    }
+
+    func displayError(_ error: any Error) {
+        let alert = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
+        alert.addAction(.init(title: "OK", style: .default))
+        navigationController.present(alert, animated: true)
+    }
+
+    private func newNavigationDispatcher() -> NavigationDispatcher {
+        return NavigationDispatcher(
+            onItemSelect: { [weak self] in self?.navigate(toScreen: .detail($0, $1)) },
+            onErrorOccur: { [weak self] in self?.displayError($0) }
+        )
     }
 
     private func configureNavigationController() {

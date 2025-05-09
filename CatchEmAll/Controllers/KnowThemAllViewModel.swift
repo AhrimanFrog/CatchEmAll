@@ -4,7 +4,8 @@ import os
 
 class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
     let items: CurrentValueSubject<[PokemonLight], Never> = .init([])
-    var onErrorOccur: ((any Error) -> Void)?
+    var onErrorOccur: (any Error) -> Void
+    var onItemSelection: (UIImage, UInt) -> Void
 
     private let dataProvider: DP
     private lazy var paginationService = PaginationService(
@@ -26,9 +27,10 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
         set { lock.withLock { _isLoading = newValue } }
     }
 
-    init(dataProvider: DP) {
+    init(dataProvider: DP, navigationDispatcher: NavigationDispatcher) {
         self.dataProvider = dataProvider
-        onErrorOccur = { print($0.localizedDescription) }
+        onErrorOccur = navigationDispatcher.onErrorOccur
+        onItemSelection = navigationDispatcher.onItemSelect
         bind()
         paginationService.requestMoreIfNeeded(for: 0)
     }
@@ -52,7 +54,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
             .sink { [weak self] result in
                 switch result {
                 case .success(let pokemon): self?.items.value.append(contentsOf: pokemon)
-                case .failure(let error): self?.onErrorOccur?(error)
+                case .failure(let error): self?.onErrorOccur(error)
                 }
             }
             .store(in: &subscriptions)

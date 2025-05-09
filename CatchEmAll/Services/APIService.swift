@@ -44,7 +44,7 @@ class APIService: APIProvider {
     }
 
     private func fetchPokemon(from resource: LightResource) -> AnyPublisher<APIPokemon, APIError> {
-        return decodedDataPublisher(for: resource.url, decodeToType: APIPokemon.self)
+        return decodedDataPublisher(for: resource.url.absoluteString, decodeToType: APIPokemon.self)
     }
 
     private func decodedDataPublisher<T: Decodable>(

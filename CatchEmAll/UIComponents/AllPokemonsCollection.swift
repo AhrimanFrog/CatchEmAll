@@ -28,6 +28,7 @@ class AllPokemonsCollection: UICollectionView {
             return collection.deque(PokemonPreviewCell.self, for: index) { cell in
                 cell.setPokemon(pokemon)
                 cell.subscribeToImage(itemProvider.getCellImage(byID: pokemon.id))
+                cell.onTouch = { image in itemProvider.onItemSelection(image, pokemon.id) }
                 itemProvider.updateDataIfNeeded(with: pokemon.id)
             }
         }
