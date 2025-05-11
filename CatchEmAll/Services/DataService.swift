@@ -25,9 +25,16 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
             .eraseToAnyPublisher()
     }
 
-    func getPokemon(byID pokemonID: UInt) -> AnyPublisher<Pokemon, DBError> {
+    func getPokemon(byID pokemonID: UInt) -> AnyPublisher<Pokemon, Error> {
         return dbProvider.retrievePokemon(byID: pokemonID)
             .map(Pokemon.fromDBData(_:))
+            .tryCatch { [apiProvider] error in
+                guard error == .notFound else { throw (error as Error) }
+                return apiProvider.fetchPokemon(byID: pokemonID)
+                    .map(Pokemon.fromAPIData(_:))
+                    .mapError { $0 as Error }
+                    .eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
     }
 

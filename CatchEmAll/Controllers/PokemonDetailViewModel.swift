@@ -9,7 +9,19 @@ class PokemonDetailViewModel {
         self.pokemonID = pokemonID
     }
 
-    func requestInfo() -> AnyPublisher<Pokemon, DBError> {
+    func requestInfo() -> AnyPublisher<Pokemon, Error> {
         return dataProvider.getPokemon(byID: pokemonID)
+    }
+
+    func requestStats() -> AnyPublisher<[String], DBError> {
+        fatalError()
+    }
+
+    func requestMoves() -> AnyPublisher<[String], DBError> {
+        fatalError()
+    }
+
+    func requestEvolution() {
+        fatalError()
     }
 }

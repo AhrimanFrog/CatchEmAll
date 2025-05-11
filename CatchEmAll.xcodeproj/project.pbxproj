@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D58934372DD0D9D9004E47C0 /* HMSegmentedControl in Frameworks */ = {isa = PBXBuildFile; productRef = D58934362DD0D9D9004E47C0 /* HMSegmentedControl */; };
 		D5EB950A2DBA653100020F28 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = D5EB95082DBA653100020F28 /* .gitignore */; };
 		D5EB950B2DBA653100020F28 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = D5EB95092DBA653100020F28 /* .swiftlint.yml */; };
 		D5EB95D92DBA762000020F28 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = D5EB95D82DBA762000020F28 /* SnapKit */; };
@@ -73,6 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D58934372DD0D9D9004E47C0 /* HMSegmentedControl in Frameworks */,
 				D5EB95D92DBA762000020F28 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -138,6 +140,7 @@
 			name = CatchEmAll;
 			packageProductDependencies = (
 				D5EB95D82DBA762000020F28 /* SnapKit */,
+				D58934362DD0D9D9004E47C0 /* HMSegmentedControl */,
 			);
 			productName = CatchEmAll;
 			productReference = D5EB94CF2DBA648E00020F28 /* CatchEmAll.app */;
@@ -223,6 +226,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				D5EB95D72DBA762000020F28 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				D58934352DD0D9D9004E47C0 /* XCRemoteSwiftPackageReference "HMSegmentedControl" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D5EB94D02DBA648E00020F28 /* Products */;
@@ -603,6 +607,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		D58934352DD0D9D9004E47C0 /* XCRemoteSwiftPackageReference "HMSegmentedControl" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/HeshamMegid/HMSegmentedControl";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		D5EB95D72DBA762000020F28 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit";
@@ -614,6 +626,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		D58934362DD0D9D9004E47C0 /* HMSegmentedControl */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D58934352DD0D9D9004E47C0 /* XCRemoteSwiftPackageReference "HMSegmentedControl" */;
+			productName = HMSegmentedControl;
+		};
 		D5EB95D82DBA762000020F28 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D5EB95D72DBA762000020F28 /* XCRemoteSwiftPackageReference "SnapKit" */;

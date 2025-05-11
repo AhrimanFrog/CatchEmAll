@@ -27,14 +27,23 @@ class APIService: APIProvider {
             .eraseToAnyPublisher()
     }
 
-    func fetchEvolution() -> AnyPublisher<[Int], APIError> {
-        fatalError("Not implemented")
+    func fetchEvolution(byPokemonID pokeID: UInt) -> AnyPublisher<[LightResource], APIError> {
+        return decodedDataPublisher(
+            for: endpoint + "species/\(pokeID)",
+            decodeToType: APIEvolutionChainResponse.self
+        )
+        .map { EvoltionDecoder.decodeEvolution(fromChain: $0.chain) }
+        .eraseToAnyPublisher()
     }
 
     func fetchPokemonImage(byID pokemonID: UInt) -> AnyPublisher<Data, Never> {
         return createTaskPublisher(for: imagesEndpoint + "\(pokemonID).png")
             .replaceError(with: Data())
             .eraseToAnyPublisher()
+    }
+
+    func fetchPokemon(byID pokemonID: UInt) -> AnyPublisher<APIPokemon, APIError> {
+        return decodedDataPublisher(for: endpoint + "pokemon/\(pokemonID)", decodeToType: APIPokemon.self)
     }
 
     private func fetchLightPokemons(offset: UInt, limit: UInt) -> AnyPublisher<LightPokemonResponse, APIError> {
