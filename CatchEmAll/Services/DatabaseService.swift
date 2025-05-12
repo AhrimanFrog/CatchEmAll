@@ -51,14 +51,12 @@ class DatabaseService: DBProvider {
 
             for apiMove in pokemon.moves {
                 let dbMove = DBMove(context: dbBgContext)
-                dbMove.id = Int64(apiMove.move.id)
                 dbMove.name = apiMove.move.name
                 dbMove.addToPokemon(dbPokemon)
             }
 
             for apiStat in pokemon.stats {
                 let dbStat = DBStat(context: dbBgContext)
-                dbStat.id = Int64(apiStat.stat.id)
                 dbStat.name = apiStat.stat.name
                 dbStat.value = Int64(apiStat.baseStat)
                 dbStat.addToPokemon(dbPokemon)
@@ -66,7 +64,6 @@ class DatabaseService: DBProvider {
 
             for apiAbility in pokemon.abilities {
                 let dbAbility = DBAbility(context: dbBgContext)
-                dbAbility.id = Int64(apiAbility.ability.id)
                 dbAbility.name = apiAbility.ability.name
                 dbAbility.addToPokemon(dbPokemon)
             }
