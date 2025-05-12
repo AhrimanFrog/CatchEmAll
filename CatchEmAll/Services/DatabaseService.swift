@@ -37,7 +37,7 @@ class DatabaseService: DBProvider {
         .eraseToAnyPublisher()
     }
 
-    func preservePokemon(_ pokemon: APIPokemon) {
+    func preservePokemon(_ pokemon: Pokemon) {
         dbBgContext.perform { [weak self] in
             guard let self else { return }
 
@@ -46,26 +46,14 @@ class DatabaseService: DBProvider {
             dbPokemon.name = pokemon.name
             dbPokemon.height = Int16(pokemon.height)
             dbPokemon.weight = Int16(pokemon.weight)
-            dbPokemon.attack = Int16(pokemon.attack)
-            dbPokemon.damage = Int16(pokemon.damage)
+            dbPokemon.abilities = pokemon.abilities.encode()
+            dbPokemon.moves = pokemon.moves.encode()
 
-            for apiMove in pokemon.moves {
-                let dbMove = DBMove(context: dbBgContext)
-                dbMove.name = apiMove.move.name
-                dbMove.addToPokemon(dbPokemon)
-            }
-
-            for apiStat in pokemon.stats {
+            for stat in pokemon.stats {
                 let dbStat = DBStat(context: dbBgContext)
-                dbStat.name = apiStat.stat.name
-                dbStat.value = Int64(apiStat.baseStat)
+                dbStat.name = stat.name
+                dbStat.value = Int64(stat.value)
                 dbStat.addToPokemon(dbPokemon)
-            }
-
-            for apiAbility in pokemon.abilities {
-                let dbAbility = DBAbility(context: dbBgContext)
-                dbAbility.name = apiAbility.ability.name
-                dbAbility.addToPokemon(dbPokemon)
             }
 
             saveContext()

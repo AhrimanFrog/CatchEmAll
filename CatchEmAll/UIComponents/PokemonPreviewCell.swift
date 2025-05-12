@@ -31,7 +31,7 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
 
     func setPokemon(_ pokemon: PokemonLight) {
         name.text = pokemon.name.capitalized
-        summary.text = pokemon.powers.joined(separator: ", ")
+        summary.text = pokemon.abilities.joined(separator: ", ")
     }
 
     func subscribeToImage(_ imagePublisher: AnyPublisher<UIImage, Never>) {

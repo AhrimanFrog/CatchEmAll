@@ -3,12 +3,15 @@ struct Pokemon {
     let name: String
     let height: UInt
     let weight: UInt
-    let powers: [String]
-    let attack: UInt
-    let damage: UInt
+    let abilities: [String]
+    let moves: [String]
+    let stats: [Stat]
+
+    var attack: UInt { stats.first { $0.name == "attack" }?.value ?? 0 }
+    var damage: UInt { stats.first { $0.name == "defense" }?.value ?? 0 }
 
     func light() -> PokemonLight {
-        return .init(id: id, name: name, powers: powers)
+        return .init(id: id, name: name, abilities: abilities)
     }
 
     static func fromDBData(_ dbPokemon: DBPokemon) -> Pokemon {
@@ -17,9 +20,12 @@ struct Pokemon {
             name: dbPokemon.name ?? "Unknown",
             height: UInt(dbPokemon.height),
             weight: UInt(dbPokemon.weight),
-            powers: dbPokemon.abilities?.allObjects.compactMap { ($0 as? DBAbility)?.name } ?? [],
-            attack: UInt(dbPokemon.attack),
-            damage: UInt(dbPokemon.damage)
+            abilities: dbPokemon.abilities?.decodeToStrings() ?? [],
+            moves: dbPokemon.moves?.decodeToStrings() ?? [],
+            stats: dbPokemon.stats?.compactMap {
+                guard let dbStat = ($0 as? DBStat) else { return nil }
+                return Stat(value: UInt(dbStat.value), name: dbStat.name ?? "Unknown")
+            } ?? []
         )
     }
 
@@ -29,9 +35,9 @@ struct Pokemon {
             name: apiPokemon.name,
             height: apiPokemon.height,
             weight: apiPokemon.weight,
-            powers: apiPokemon.abilities.map { $0.ability.name },
-            attack: apiPokemon.attack,
-            damage: apiPokemon.damage
+            abilities: apiPokemon.abilities.map { $0.ability.name },
+            moves: apiPokemon.moves.map { $0.move.name },
+            stats: apiPokemon.stats.map { .init(value: $0.baseStat, name: $0.stat.name) }
         )
     }
 }

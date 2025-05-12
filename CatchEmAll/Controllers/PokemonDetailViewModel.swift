@@ -13,14 +13,6 @@ class PokemonDetailViewModel {
         return dataProvider.getPokemon(byID: pokemonID)
     }
 
-    func requestStats() -> AnyPublisher<[String], DBError> {
-        fatalError()
-    }
-
-    func requestMoves() -> AnyPublisher<[String], DBError> {
-        fatalError()
-    }
-
     func requestEvolution() {
         fatalError()
     }

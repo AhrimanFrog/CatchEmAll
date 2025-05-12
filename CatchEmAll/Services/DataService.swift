@@ -15,10 +15,10 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
             .map { result in result.map(Pokemon.fromDBData) }
             .catch { [apiProvider] _ in
                 apiProvider.fetchPokemons(offset: offset, limit: limit)
+                    .map { $0.map(Pokemon.fromAPIData(_:)) }
                     .handleEvents(receiveOutput: { [weak self] apiPokemon in
                         apiPokemon.forEach { self?.dbProvider.preservePokemon($0) }
                     })
-                    .map { result in result.map(Pokemon.fromAPIData) }
                     .mapError { $0 as Error }
                     .eraseToAnyPublisher()
             }
