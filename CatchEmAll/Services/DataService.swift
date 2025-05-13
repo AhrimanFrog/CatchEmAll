@@ -49,4 +49,26 @@ class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
             }
             .eraseToAnyPublisher()
     }
+
+    func getEvolution(byPokemonID pokemonID: UInt) -> AnyPublisher<[PokemonLight], Never> {
+        return dbProvider.retrieveEvolutionChain(byPokemonID: pokemonID)
+            .catch { [weak self] _ in
+                guard let self else {
+                    return Fail<[UInt], Error>(error: APIError.networkProblem as Error).eraseToAnyPublisher()
+                }
+                return apiProvider.fetchEvolution(byPokemonID: pokemonID)
+                    .handleEvents(receiveOutput: { [weak self] in
+                        self?.dbProvider.preserveEvolution(chain: $0, forPokemonID: pokemonID)
+                    })
+                    .mapError { $0 as Error }
+                    .eraseToAnyPublisher()
+            }
+            .flatMap { [weak self] evolutionIDs in
+                let pokePublishers = evolutionIDs.compactMap { self?.getPokemon(byID: $0) }
+                return Publishers.MergeMany(pokePublishers).collect().eraseToAnyPublisher()
+            }
+            .map { pokemon in pokemon.map { $0.light() } }
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
+    }
 }

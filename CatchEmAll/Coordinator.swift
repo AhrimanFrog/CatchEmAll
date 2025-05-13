@@ -43,7 +43,11 @@ class Coordinator {
             guard let startingController else { return }
             navigationController.popToViewController(startingController, animated: true)
         case let .detail(image, pokemonID):
-            let viewModel = PokemonDetailViewModel(dataService: dataService, pokemonID: pokemonID)
+            let viewModel = PokemonDetailViewModel(
+                dataService: dataService,
+                pokemonID: pokemonID,
+                navigationDispatcher: newNavigationDispatcher()
+            )
             navigationController.pushViewController(
                 PokemonDetail(viewModel: viewModel, pokemonImage: image),
                 animated: true

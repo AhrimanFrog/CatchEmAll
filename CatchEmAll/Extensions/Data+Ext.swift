@@ -1,7 +1,9 @@
 import Foundation
 
 extension Data {
-    func decodeToStrings() -> [String]? {
-        return try? JSONDecoder().decode([String].self, from: self)
+    private static let decoder = JSONDecoder()
+
+    func decodeTo<T: Decodable>(type: T.Type) -> T? {
+        return try? Data.decoder.decode(type, from: self)
     }
 }

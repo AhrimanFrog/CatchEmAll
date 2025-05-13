@@ -6,7 +6,7 @@ extension Array {
     }
 }
 
-extension Array where Element == String {
+extension Array where Element: Encodable {
     func encode() -> Data? {
         return try? JSONEncoder().encode(self)
     }

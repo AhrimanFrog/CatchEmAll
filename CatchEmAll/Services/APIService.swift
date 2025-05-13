@@ -27,7 +27,7 @@ class APIService: APIProvider {
             .eraseToAnyPublisher()
     }
 
-    func fetchEvolution(byPokemonID pokeID: UInt) -> AnyPublisher<[LightResource], APIError> {
+    func fetchEvolution(byPokemonID pokeID: UInt) -> AnyPublisher<[UInt], APIError> {
         return decodedDataPublisher(
             for: endpoint + "species/\(pokeID)",
             decodeToType: APIEvolutionChainResponse.self

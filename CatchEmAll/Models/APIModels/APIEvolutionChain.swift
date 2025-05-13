@@ -8,15 +8,12 @@ struct APIEvolutionChain: Decodable {
 }
 
 enum EvoltionDecoder {
-    static func decodeEvolution(fromChain chain: APIEvolutionChain) -> [LightResource] {
-        var evolutions: [LightResource] = []
+    static func decodeEvolution(fromChain chain: APIEvolutionChain) -> [UInt] {
+        var evolutions: [UInt] = []
         var currentChain: APIEvolutionChain? = chain
 
         while let chain = currentChain {
-            let pokemonID = chain.species.url.lastPathComponent
-            let strippedURL = chain.species.url.deletingLastPathComponent().deletingLastPathComponent()
-            let newURL = strippedURL.appending(path: "pokemon/\(pokemonID)")
-            evolutions.append(LightResource(name: chain.species.name, url: newURL))
+            evolutions.append(chain.species.id)
             currentChain = chain.evolvesTo.first
         }
         return evolutions
