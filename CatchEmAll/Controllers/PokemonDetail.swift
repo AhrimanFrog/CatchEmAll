@@ -44,14 +44,16 @@ class PokemonDetail: UIViewController {
     }
 
     private func bind() {
-        segmentedControl.publisher(for: \.selectedSegmentIndex)
-            .sink { [weak self] segment in self?.viewModel.updateDataIfNeeded(with: segment) }
-            .store(in: &subscriptions)
+        segmentedControl.addTarget(self, action: #selector(updateTable), for: .valueChanged)
         viewModel.$pokemon
             .sink { [weak self] _ in
                 self?.viewModel.updateDataIfNeeded(with: self?.segmentedControl.selectedSegmentIndex ?? 0)
             }
             .store(in: &subscriptions)
+    }
+
+    @objc private func updateTable() {
+        viewModel.updateDataIfNeeded(with: segmentedControl.selectedSegmentIndex)
     }
 
     private func configure() {
