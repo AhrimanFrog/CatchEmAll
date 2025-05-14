@@ -6,7 +6,7 @@ struct Pokemon {
     let abilities: [String]
     let moves: [String]
     let stats: [Stat]
-    var evolutions: [PokemonLight]
+    var evolutions: [PokemonLight]?
 
     var attack: UInt { stats.first { $0.name == "attack" }?.value ?? 0 }
     var damage: UInt { stats.first { $0.name == "defense" }?.value ?? 0 }
@@ -27,7 +27,7 @@ struct Pokemon {
                 guard let dbStat = ($0 as? DBStat) else { return nil }
                 return Stat(value: UInt(dbStat.value), name: dbStat.name ?? "Unknown")
             } ?? [],
-            evolutions: []
+            evolutions: nil
         )
     }
 
@@ -40,7 +40,7 @@ struct Pokemon {
             abilities: apiPokemon.abilities.map { $0.ability.name },
             moves: apiPokemon.moves.map { $0.move.name },
             stats: apiPokemon.stats.map { .init(value: $0.baseStat, name: $0.stat.name) },
-            evolutions: []
+            evolutions: nil
         )
     }
 }

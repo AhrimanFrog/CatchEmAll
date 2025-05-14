@@ -2,9 +2,9 @@ import Combine
 import UIKit
 
 protocol CollectionItemsProvider {
+    associatedtype ItemsType
+    var items: CurrentValueSubject<ItemsType, Never> { get }
     func getCellImage(byID id: UInt) -> AnyPublisher<UIImage, Never>
-    func updateDataIfNeeded(with itemID: UInt)
-    var items: CurrentValueSubject<[PokemonLight], Never> { get }
-    var onErrorOccur: (Error) -> Void { get }
-    var onItemSelection: (UIImage, UInt) -> Void { get }
+    func updateDataIfNeeded(with: UInt)
+    var navigationDispatcher: NavigationDispatcher { get }
 }

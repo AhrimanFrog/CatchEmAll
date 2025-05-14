@@ -4,10 +4,10 @@ import UIKit
 class AllPokemonsCollection: UICollectionView {
     private var diffDataSource: UICollectionViewDiffableDataSource<Int, PokemonLight>?
     private var cachedCellWidth: Double?
-    private var itemProvider: CollectionItemsProvider
+    private var itemProvider: any CollectionItemsProvider
     private var dataSubscription: AnyCancellable?
 
-    init(itemProvider: CollectionItemsProvider) {
+    init(itemProvider: some CollectionItemsProvider) {
         self.itemProvider = itemProvider
         super.init(frame: .zero, collectionViewLayout: .vertical())
         initDataSource()
@@ -16,7 +16,7 @@ class AllPokemonsCollection: UICollectionView {
         backgroundColor = .clear
         dataSubscription = itemProvider.items
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] in self?.updateUI(withItems: $0) }
+            .sink { [weak self] in self?.updateUI(withItems: ($0 as? [PokemonLight]) ?? []) }
     }
 
     required init?(coder: NSCoder) {
@@ -28,7 +28,7 @@ class AllPokemonsCollection: UICollectionView {
             return collection.deque(PokemonPreviewCell.self, for: index) { cell in
                 cell.setPokemon(pokemon)
                 cell.subscribeToImage(itemProvider.getCellImage(byID: pokemon.id))
-                cell.onTouch = { image in itemProvider.onItemSelection(image, pokemon.id) }
+                cell.onTouch = { image in itemProvider.navigationDispatcher.onItemSelect(image, pokemon.id) }
                 itemProvider.updateDataIfNeeded(with: pokemon.id)
             }
         }

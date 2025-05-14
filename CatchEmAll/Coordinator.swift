@@ -71,7 +71,7 @@ class Coordinator {
     private func configureNavigationController() {
         navigationController.navigationBar.prefersLargeTitles = true
         navigationController.navigationBar.titleTextAttributes = [
-            .font: UIFont.lato(ofSize: 24, weight: .bold)!
+            .font: UIFont.lato(ofSize: 24, weight: .bold)
         ]
         navigationController.navigationBar.tintColor = .label
         navigationController.navigationBar.backIndicatorTransitionMaskImage = .init(systemName: "arrow.left")

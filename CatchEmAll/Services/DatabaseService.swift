@@ -80,7 +80,7 @@ class DatabaseService: DBProvider {
         Future { [weak self] promise in
             self?.dbFgContext.perform { [weak self] in
                 guard let self else { return promise(.failure(.expired)) }
-                guard let pokemon = retrieveSinglePokemon(byID: pokemonID) else {
+                guard let pokemon = dbFgContext.fetchEntity(DBPokemon.self, byID: pokemonID) else {
                     return promise(.failure(.notFound))
                 }
                 return promise(.success(pokemon))
@@ -91,7 +91,9 @@ class DatabaseService: DBProvider {
 
     func preserveEvolution(chain: [UInt], forPokemonID pokemonID: UInt) {
         dbBgContext.perform { [weak self] in
-            guard let dbPokemon = self?.retrieveSinglePokemon(byID: pokemonID) else { return }
+            guard let dbPokemon = self?.dbBgContext.fetchEntity(DBPokemon.self, byID: pokemonID) else {
+                return
+            }
             dbPokemon.evolutionChain = chain.encode()
             self?.saveContext()
         }
@@ -99,8 +101,8 @@ class DatabaseService: DBProvider {
 
     func retrieveEvolutionChain(byPokemonID pokemonID: UInt) -> AnyPublisher<[UInt], DBError> {
         Future { [weak self] promise in
-            self?.dbFgContext.perform { [weak self] in
-                guard let dbPokemon = self?.retrieveSinglePokemon(byID: pokemonID) else {
+            self?.dbFgContext.perform { [weak self] in // TODO: Rewrite using retrievePokemon
+                guard let dbPokemon = self?.dbFgContext.fetchEntity(DBPokemon.self, byID: pokemonID) else {
                     return promise(.failure(.notFound))
                 }
                 guard let chain = dbPokemon.evolutionChain?.decodeTo(type: [UInt].self) else {
@@ -110,13 +112,6 @@ class DatabaseService: DBProvider {
             }
         }
         .eraseToAnyPublisher()
-    }
-
-    private func retrieveSinglePokemon(byID pokemonID: UInt) -> DBPokemon? {
-        let request = DBPokemon.fetchRequest()
-        request.fetchLimit = 1
-        request.predicate = .init(format: "id == %@", pokemonID)
-        return try? dbFgContext.fetch(request).first
     }
 
     private func saveContext() {

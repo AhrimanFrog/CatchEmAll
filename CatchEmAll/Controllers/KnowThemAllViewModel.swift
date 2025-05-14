@@ -3,9 +3,9 @@ import UIKit
 import os
 
 class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
+    let navigationDispatcher: NavigationDispatcher
+
     let items: CurrentValueSubject<[PokemonLight], Never> = .init([])
-    var onErrorOccur: (any Error) -> Void
-    var onItemSelection: (UIImage, UInt) -> Void
 
     private let dataProvider: DP
     private lazy var paginationService = PaginationService(
@@ -29,8 +29,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
 
     init(dataProvider: DP, navigationDispatcher: NavigationDispatcher) {
         self.dataProvider = dataProvider
-        onErrorOccur = navigationDispatcher.onErrorOccur
-        onItemSelection = navigationDispatcher.onItemSelect
+        self.navigationDispatcher = navigationDispatcher
         bind()
         paginationService.requestMoreIfNeeded(for: 0)
     }
@@ -54,7 +53,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
             .sink { [weak self] result in
                 switch result {
                 case .success(let pokemon): self?.items.value.append(contentsOf: pokemon)
-                case .failure(let error): self?.onErrorOccur(error)
+                case .failure(let error): self?.navigationDispatcher.onErrorOccur(error)
                 }
             }
             .store(in: &subscriptions)

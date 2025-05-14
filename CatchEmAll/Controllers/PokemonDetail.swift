@@ -1,20 +1,44 @@
 import SnapKit
 import UIKit
+import HMSegmentedControl
 
 class PokemonDetail: UIViewController {
     private let name = UILabel()
     private let image = UIImageView(image: .pokeball)
-    private let segmentedControl = UISegmentedControl()
-    private let infoTable = UITableView()
+    lazy var segmentedControl: HMSegmentedControl = {
+        let control = HMSegmentedControl(
+            sectionTitles: DetailsSection.allCases.map { $0.rawValue.capitalized }
+        )
+        control.selectionIndicatorHeight = 1.5
+        control.selectionIndicatorColor = .systemRed
+        control.backgroundColor = .clear
+        control.selectionIndicatorLocation = .bottom
+        control.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.label,
+            NSAttributedString.Key.font: UIFont.lato(ofSize: 16)
+        ]
+        control.selectedTitleTextAttributes = [
+            NSAttributedString.Key.foregroundColor: UIColor.systemRed,
+            NSAttributedString.Key.font: UIFont.lato(ofSize: 16)
+        ]
+        return control
+    }()
+    private let infoTable: InfoTable<PokemonDetailViewModel>
 
     private let viewModel: PokemonDetailViewModel
 
     init(viewModel: PokemonDetailViewModel, pokemonImage: UIImage) {
         self.viewModel = viewModel
+        self.infoTable = .init(itemProvider: viewModel)
         super.init(nibName: nil, bundle: nil)
         image.image = pokemonImage
         configure()
         setConstraints()
+        viewModel.subscribeToSectionUpdates(
+            sectionPublisher: segmentedControl
+                .publisher(for: \.selectedSegmentIndex)
+                .eraseToAnyPublisher()
+        )
     }
 
     required init?(coder: NSCoder) {
