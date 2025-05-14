@@ -46,7 +46,9 @@ class PokemonDetail: UIViewController {
     private func bind() {
         segmentedControl.addTarget(self, action: #selector(updateTable), for: .valueChanged)
         viewModel.$pokemon
-            .sink { [weak self] _ in
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] pokemon in
+                self?.navigationItem.title = pokemon?.name.capitalized
                 self?.viewModel.updateDataIfNeeded(with: self?.segmentedControl.selectedSegmentIndex ?? 0)
             }
             .store(in: &subscriptions)

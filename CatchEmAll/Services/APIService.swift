@@ -28,10 +28,14 @@ class APIService: APIProvider {
     }
 
     func fetchEvolution(byPokemonID pokeID: UInt) -> AnyPublisher<[UInt], APIError> {
-        return decodedDataPublisher(
-            for: endpoint + "species/\(pokeID)",
-            decodeToType: APIEvolutionChainResponse.self
-        )
+        return decodedDataPublisher(for: endpoint + "pokemon-species/\(pokeID)", decodeToType: APISpecies.self)
+        .flatMap { [weak self] speciesResponse in
+            guard let self else {
+                return Fail<APIEvolutionChainResponse, APIError>(error: APIError.badResponse).eraseToAnyPublisher()
+            }
+            let evolutionQuery = speciesResponse.evolutionChain.url
+            return decodedDataPublisher(for: evolutionQuery, decodeToType: APIEvolutionChainResponse.self)
+        }
         .map { EvoltionDecoder.decodeEvolution(fromChain: $0.chain) }
         .eraseToAnyPublisher()
     }

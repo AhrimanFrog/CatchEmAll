@@ -21,8 +21,8 @@ class InfoCell: UITableViewCell, ReuseIdentifiable {
     }
 
     private func configure() {
-        titleLabel.font = .lato(ofSize: 11, weight: .bold)
-        bodyLabel.font = .lato(ofSize: 11)
+        titleLabel.font = .lato(ofSize: 16, weight: .bold)
+        bodyLabel.font = .lato(ofSize: 16)
         selectionStyle = .none
     }
 

@@ -27,7 +27,7 @@ class EvolutionCell: UITableViewCell, ReuseIdentifiable {
 
     private func configure() {
         image.contentMode = .scaleAspectFit
-        bodyLabel.font = .lato(ofSize: 11)
+        bodyLabel.font = .lato(ofSize: 16)
         selectionStyle = .none
     }
 

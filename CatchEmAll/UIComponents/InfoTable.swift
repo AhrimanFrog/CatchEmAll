@@ -9,6 +9,9 @@ class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITa
     init(itemProvider: DataProvider) {
         self.itemProvider = itemProvider
         super.init(frame: .zero, style: .plain)
+        separatorStyle = .none
+        estimatedRowHeight = 44
+        rowHeight = 44
         register(EvolutionCell.self)
         register(InfoCell.self)
         initDataSource()

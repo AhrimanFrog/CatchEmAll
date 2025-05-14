@@ -67,7 +67,7 @@ class PokemonDetailViewModel: CollectionItemsProvider, SectionSelectable {
 
     private func uiMoves() -> [TableItem] {
         guard let pokemon else { return [] }
-        return pokemon.moves.enumerated().map { TableItem(name: String($0.offset), value: $0.element) }
+        return pokemon.moves.enumerated().map { TableItem(name: String($0.offset + 1), value: $0.element) }
     }
 
     private func uiStats() -> [TableItem] {
