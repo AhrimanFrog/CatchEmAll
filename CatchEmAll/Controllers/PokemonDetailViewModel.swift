@@ -54,12 +54,6 @@ class PokemonDetailViewModel: CollectionItemsProvider, SectionSelectable {
         items.send(newItems)
     }
 
-    func subscribeToSectionUpdates(sectionPublisher: AnyPublisher<UInt, Never>) {
-        sectionPublisher
-            .sink { [weak self] sectionIndex in self?.updateDataIfNeeded(with: sectionIndex) }
-            .store(in: &subscriptions)
-    }
-
     private func generalInfo() -> [TableItem] {
         guard let pokemon else { return [] }
         return [

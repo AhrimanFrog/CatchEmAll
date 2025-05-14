@@ -12,6 +12,9 @@ class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITa
         register(EvolutionCell.self)
         register(InfoCell.self)
         initDataSource()
+        dataSubscription = itemProvider.items
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in self?.updateTable(withInfo: ($0 as? [TableItem]) ?? []) }
     }
 
     required init?(coder: NSCoder) {

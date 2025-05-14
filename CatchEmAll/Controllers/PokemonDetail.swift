@@ -1,5 +1,6 @@
 import SnapKit
 import UIKit
+import Combine
 import HMSegmentedControl
 
 class PokemonDetail: UIViewController {
@@ -26,6 +27,7 @@ class PokemonDetail: UIViewController {
     private let infoTable: InfoTable<PokemonDetailViewModel>
 
     private let viewModel: PokemonDetailViewModel
+    private var subscriptions = Set<AnyCancellable>()
 
     init(viewModel: PokemonDetailViewModel, pokemonImage: UIImage) {
         self.viewModel = viewModel
@@ -34,15 +36,22 @@ class PokemonDetail: UIViewController {
         image.image = pokemonImage
         configure()
         setConstraints()
-        viewModel.subscribeToSectionUpdates(
-            sectionPublisher: segmentedControl
-                .publisher(for: \.selectedSegmentIndex)
-                .eraseToAnyPublisher()
-        )
+        bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    private func bind() {
+        segmentedControl.publisher(for: \.selectedSegmentIndex)
+            .sink { [weak self] segment in self?.viewModel.updateDataIfNeeded(with: segment) }
+            .store(in: &subscriptions)
+        viewModel.$pokemon
+            .sink { [weak self] _ in
+                self?.viewModel.updateDataIfNeeded(with: self?.segmentedControl.selectedSegmentIndex ?? 0)
+            }
+            .store(in: &subscriptions)
     }
 
     private func configure() {
