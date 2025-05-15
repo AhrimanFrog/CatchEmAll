@@ -19,7 +19,8 @@ class KnowThemAll: UIViewController {
 
     private func configure() {
         view.backgroundColor = .systemBackground
-        navigationItem.title = "Know Them All"
+        title = "Know Them All"
+        navigationItem.title = title
         navigationItem.backButtonTitle = ""
     }
 

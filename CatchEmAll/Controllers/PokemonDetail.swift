@@ -26,7 +26,7 @@ class PokemonDetail: UIViewController {
     }()
     private let infoTable: InfoTable<PokemonDetailViewModel>
 
-    private let viewModel: PokemonDetailViewModel
+    let viewModel: PokemonDetailViewModel
     private var subscriptions = Set<AnyCancellable>()
 
     init(viewModel: PokemonDetailViewModel, pokemonImage: UIImage) {

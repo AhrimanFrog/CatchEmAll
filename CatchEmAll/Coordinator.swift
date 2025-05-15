@@ -44,14 +44,23 @@ class Coordinator {
             guard let startingController else { return }
             navigationController.popToViewController(startingController, animated: true)
         case let .detail(image, pokemonID):
+            showPokemonDetail(for: pokemonID, withImage: image)
+        }
+    }
+
+    func showPokemonDetail(for pokemonID: UInt, withImage image: UIImage) {
+        if let existingVC = navigationController.viewControllers.first(where: { viewController in
+            return pokemonID == ((viewController as? PokemonDetail)?.viewModel.pokemon?.id ?? 0)
+        }) {
+            navigationController.popToViewController(existingVC, animated: true)
+        } else {
             let viewModel = PokemonDetailViewModel(
                 dataService: dataService,
                 pokemonID: pokemonID,
                 navigationDispatcher: newNavigationDispatcher()
             )
             navigationController.pushViewController(
-                PokemonDetail(viewModel: viewModel, pokemonImage: image),
-                animated: true
+                PokemonDetail(viewModel: viewModel, pokemonImage: image), animated: true
             )
         }
     }
