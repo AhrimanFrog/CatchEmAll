@@ -100,18 +100,13 @@ class DatabaseService: DBProvider {
     }
 
     func retrieveEvolutionChain(byPokemonID pokemonID: UInt) -> AnyPublisher<[UInt], DBError> {
-        Future { [weak self] promise in
-            self?.dbFgContext.perform { [weak self] in // TODO: Rewrite using retrievePokemon
-                guard let dbPokemon = self?.dbFgContext.fetchEntity(DBPokemon.self, byID: pokemonID) else {
-                    return promise(.failure(.notFound))
-                }
-                guard let chain = dbPokemon.evolutionChain?.decodeTo(type: [UInt].self) else {
-                    return promise(.failure(.notFound))
-                }
-                return promise(.success(chain))
+        return retrievePokemon(byID: pokemonID)
+            .tryMap { dbPokemon in
+                guard let chain = dbPokemon.evolutionChain?.decodeTo(type: [UInt].self) else { throw DBError.notFound }
+                return chain
             }
-        }
-        .eraseToAnyPublisher()
+            .mapError { ($0 as? DBError) ?? .notFound }
+            .eraseToAnyPublisher()
     }
 
     private func saveContext() {
