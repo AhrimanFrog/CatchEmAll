@@ -26,9 +26,9 @@ class AllPokemonsCollection: UICollectionView {
     private func initDataSource() {
         diffDataSource = .init(collectionView: self) { [itemProvider] collection, index, pokemon in
             return collection.deque(PokemonPreviewCell.self, for: index) { cell in
-                cell.setPokemon(pokemon)
-                cell.subscribeToImage(itemProvider.getCellImage(byID: pokemon.id))
-                cell.onTouch = { image in itemProvider.navigationDispatcher.onItemSelect(image, pokemon.id) }
+                cell.setPokemon(
+                    pokemon, imagePublisher: itemProvider.getCellImage(byID: pokemon.id)
+                ) { image in itemProvider.navigationDispatcher.onItemSelect(image, pokemon.id) }
                 itemProvider.updateDataIfNeeded(with: pokemon.id)
             }
         }
@@ -51,7 +51,6 @@ extension AllPokemonsCollection: UICollectionViewDelegateFlowLayout {
         if let cachedCellWidth {
             return .init(width: cachedCellWidth, height: cachedCellWidth * 0.675)
         }
-
         let layout = collectionViewLayout as? UICollectionViewFlowLayout
         let collectionWidth = collectionView.frame.width
         let horizontalPadding = layout?.sectionInset.horizontal ?? 0

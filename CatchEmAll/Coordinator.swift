@@ -1,6 +1,7 @@
 import UIKit
 import CoreData
 
+@MainActor
 class Coordinator {
     enum Screen {
         case start
@@ -56,9 +57,11 @@ class Coordinator {
     }
 
     func displayError(_ error: any Error) {
-        let alert = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
-        alert.addAction(.init(title: "OK", style: .default))
-        navigationController.present(alert, animated: true)
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Oops!", message: error.localizedDescription, preferredStyle: .alert)
+            alert.addAction(.init(title: "OK", style: .default))
+            self.navigationController.present(alert, animated: true)
+        }
     }
 
     private func newNavigationDispatcher() -> NavigationDispatcher {

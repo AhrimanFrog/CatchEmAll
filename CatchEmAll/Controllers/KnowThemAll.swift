@@ -6,7 +6,7 @@ class KnowThemAll: UIViewController {
     private let backgroundLightningView = UIImageView(image: .lightning)
     private let collection: AllPokemonsCollection
 
-    init(itemProvider: any CollectionItemsProvider) {
+    init(itemProvider: KnowThemAllViewModel) {
         collection = .init(itemProvider: itemProvider)
         super.init(nibName: nil, bundle: nil)
         configure()

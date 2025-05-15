@@ -2,12 +2,12 @@ import Combine
 import UIKit
 import os
 
-class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
+class KnowThemAllViewModel: CollectionItemsProvider {
     let navigationDispatcher: NavigationDispatcher
 
     let items: CurrentValueSubject<[PokemonLight], Never> = .init([])
 
-    private let dataProvider: DP
+    private let dataProvider: DataProvider
     private lazy var paginationService = PaginationService(
         isProcessingAvailable: { [weak self] in
             guard let self else { return false }
@@ -27,7 +27,7 @@ class KnowThemAllViewModel<DP: DataProvider>: CollectionItemsProvider {
         set { lock.withLock { _isLoading = newValue } }
     }
 
-    init(dataProvider: DP, navigationDispatcher: NavigationDispatcher) {
+    init(dataProvider: any DataProvider, navigationDispatcher: NavigationDispatcher) {
         self.dataProvider = dataProvider
         self.navigationDispatcher = navigationDispatcher
         bind()

@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITableView {
+class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITableView, UITableViewDelegate {
     private var diffDataSource: UITableViewDiffableDataSource<Int, TableItem>?
     private var itemProvider: DataProvider
     private var dataSubscription: AnyCancellable?
@@ -15,6 +15,7 @@ class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITa
         register(EvolutionCell.self)
         register(InfoCell.self)
         initDataSource()
+        delegate = self
         dataSubscription = itemProvider.items
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in self?.updateTable(withInfo: ($0 as? [TableItem]) ?? []) }
@@ -45,5 +46,14 @@ class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITa
         snapshot.appendSections([0])
         snapshot.appendItems(info, toSection: 0)
         diffDataSource?.apply(snapshot)
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard itemProvider.section == .evolution, let items = itemProvider.items.value as? [TableItem] else {
+            return
+        }
+        let selectedID = UInt(items[indexPath.row].name) ?? 0
+        let image = (tableView.cellForRow(at: indexPath) as? EvolutionCell)?.image.image ?? .pokeball
+        itemProvider.navigationDispatcher.onItemSelect(image, selectedID)
     }
 }

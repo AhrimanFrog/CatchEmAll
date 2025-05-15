@@ -11,6 +11,12 @@ class InfoCell: UITableViewCell, ReuseIdentifiable {
         configure()
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = ""
+        bodyLabel.text = ""
+    }
+
     func setText(title: String, body: String) {
         titleLabel.text = title
         bodyLabel.text = body
@@ -21,8 +27,8 @@ class InfoCell: UITableViewCell, ReuseIdentifiable {
     }
 
     private func configure() {
-        titleLabel.font = .lato(ofSize: 16, weight: .bold)
-        bodyLabel.font = .lato(ofSize: 16)
+        titleLabel.font = .lato(ofSize: 18, weight: .bold)
+        bodyLabel.font = .lato(ofSize: 18)
         selectionStyle = .none
     }
 

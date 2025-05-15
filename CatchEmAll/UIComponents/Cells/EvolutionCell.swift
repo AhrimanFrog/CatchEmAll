@@ -3,7 +3,7 @@ import Combine
 import SnapKit
 
 class EvolutionCell: UITableViewCell, ReuseIdentifiable {
-    private let image = UIImageView(image: .pokeball)
+    let image = UIImageView(image: .pokeball)
     private let bodyLabel = UILabel()
 
     private var imageSubscription: AnyCancellable?
@@ -12,6 +12,12 @@ class EvolutionCell: UITableViewCell, ReuseIdentifiable {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setConstraints()
         configure()
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageSubscription?.cancel()
+        bodyLabel.text = ""
     }
 
     func setData(text: String, imagePublisher: AnyPublisher<UIImage, Never>) {
@@ -27,7 +33,7 @@ class EvolutionCell: UITableViewCell, ReuseIdentifiable {
 
     private func configure() {
         image.contentMode = .scaleAspectFit
-        bodyLabel.font = .lato(ofSize: 16)
+        bodyLabel.font = .lato(ofSize: 18)
         selectionStyle = .none
     }
 
