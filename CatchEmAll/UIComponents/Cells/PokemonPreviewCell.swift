@@ -8,8 +8,6 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
     private let summary = TextLabel(style: .secondary)
     private var imageSubscription: AnyCancellable?
 
-    var onTouch: ((UIImage) -> Void)?
-
     override init(frame: CGRect) {
         super.init(frame: .zero)
         setConstraints()
@@ -25,18 +23,12 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         name.text = ""
         summary.text = ""
         image.image = nil
-        onTouch = nil
         imageSubscription?.cancel()
     }
 
-    func setPokemon(
-        _ pokemon: PokemonLight,
-        imagePublisher: AnyPublisher<UIImage, Never>,
-        onTouch: @escaping (UIImage) -> Void
-    ) {
+    func setPokemon(_ pokemon: PokemonLight, imagePublisher: AnyPublisher<UIImage, Never>) {
         name.text = pokemon.name.capitalized
         summary.text = pokemon.abilities.joined(separator: ", ")
-        self.onTouch = onTouch
         imageSubscription = imagePublisher
             .receive(on: DispatchQueue.main)
             .sink { [weak self] pokemonImage in self?.image.image = pokemonImage }
@@ -50,11 +42,6 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         layer.shadowRadius = 2
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
-    }
-
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesEnded(touches, with: event)
-        onTouch?(image.image ?? .pokeball)
     }
 
     private func setConstraints() {

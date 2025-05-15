@@ -1,13 +1,15 @@
 import Combine
 import UIKit
 
-class AllPokemonsCollection: UICollectionView {
+class AllPokemonsCollection<
+    Provder: CollectionItemsProvider
+>: UICollectionView, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate {
     private var diffDataSource: UICollectionViewDiffableDataSource<Int, PokemonLight>?
     private var cachedCellWidth: Double?
-    private var itemProvider: any CollectionItemsProvider
+    private var itemProvider: Provder
     private var dataSubscription: AnyCancellable?
 
-    init(itemProvider: some CollectionItemsProvider) {
+    init(itemProvider: Provder) {
         self.itemProvider = itemProvider
         super.init(frame: .zero, collectionViewLayout: .vertical())
         initDataSource()
@@ -26,9 +28,7 @@ class AllPokemonsCollection: UICollectionView {
     private func initDataSource() {
         diffDataSource = .init(collectionView: self) { [itemProvider] collection, index, pokemon in
             return collection.deque(PokemonPreviewCell.self, for: index) { cell in
-                cell.setPokemon(
-                    pokemon, imagePublisher: itemProvider.getCellImage(byID: pokemon.id)
-                ) { image in itemProvider.navigationDispatcher.onItemSelect(image, pokemon.id) }
+                cell.setPokemon(pokemon, imagePublisher: itemProvider.getCellImage(byID: pokemon.id))
                 itemProvider.updateDataIfNeeded(with: pokemon.id)
             }
         }
@@ -40,10 +40,8 @@ class AllPokemonsCollection: UICollectionView {
         snapshot.appendItems(items, toSection: 0)
         diffDataSource?.apply(snapshot, animatingDifferences: true)
     }
-}
 
-extension AllPokemonsCollection: UICollectionViewDelegateFlowLayout {
-    func collectionView(
+    func collectionView( // UICollectionViewDelegateFlowLayout method
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt: IndexPath
@@ -58,5 +56,11 @@ extension AllPokemonsCollection: UICollectionViewDelegateFlowLayout {
         let width = (collectionWidth - horizontalPadding - interitemSpacing) / 2
         cachedCellWidth = width
         return .init(width: width, height: width * 0.675)
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let items = itemProvider.items.value as? [PokemonLight] else { return }
+        let image = (cellForItem(at: indexPath) as? PokemonPreviewCell)?.image.image ?? .pokeball
+        itemProvider.navigationDispatcher.onItemSelect(image, items[indexPath.item].id)
     }
 }

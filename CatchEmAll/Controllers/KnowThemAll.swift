@@ -4,7 +4,7 @@ import SnapKit
 
 class KnowThemAll: UIViewController {
     private let backgroundLightningView = UIImageView(image: .lightning)
-    private let collection: AllPokemonsCollection
+    private let collection: AllPokemonsCollection<KnowThemAllViewModel>
 
     init(itemProvider: KnowThemAllViewModel) {
         collection = .init(itemProvider: itemProvider)
