@@ -23,7 +23,7 @@ class APIServiceTests: XCTestCase {
         let config = URLSessionConfiguration.ephemeral
         config.protocolClasses = [URLProtocolStub.self]
 
-        service = APIService(session:  URLSession(configuration: config))
+        service = APIService(session: URLSession(configuration: config))
     }
 
     override func tearDown() {
@@ -46,14 +46,15 @@ class APIServiceTests: XCTestCase {
         )
 
         service.fetchPokemon(byID: 1)
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
+            .sink { result in
+                switch result {
+                case .failure(let error):
                     XCTFail("Unexpected failure: \(error)")
+                case .success(let pokemon):
+                    XCTAssertEqual(pokemon.name, "bulbasaur")
+                    expectation.fulfill()
                 }
-            }, receiveValue: { pokemon in
-                XCTAssertEqual(pokemon.name, "bulbasaur")
-                expectation.fulfill()
-            })
+            }
             .store(in: &cancellables)
 
         wait(for: [expectation], timeout: 2.0)
@@ -70,14 +71,15 @@ class APIServiceTests: XCTestCase {
         )
 
         service.fetchPokemon(byID: 1)
-            .sink(receiveCompletion: { completion in
-                if case .failure(let error) = completion {
+            .sink { result in
+                switch result {
+                case .success:
+                    XCTFail("Expected failure, got success")
+                case .failure(let error):
                     XCTAssertEqual(error, .wrongStatusCode(404))
                     expectation.fulfill()
                 }
-            }, receiveValue: { _ in
-                XCTFail("Expected failure, got success")
-            })
+            }
             .store(in: &cancellables)
 
         wait(for: [expectation], timeout: 2.0)
@@ -89,10 +91,10 @@ class APIServiceTests: XCTestCase {
         URLProtocolStub.error = URLError(.notConnectedToInternet)
 
         service.fetchPokemonImage(byID: 1)
-            .sink(receiveValue: { data in
+            .sink{ data in
                 XCTAssertEqual(data, Data())
                 expectation.fulfill()
-            })
+            }
             .store(in: &cancellables)
 
         wait(for: [expectation], timeout: 2.0)
