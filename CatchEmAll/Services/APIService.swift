@@ -4,13 +4,15 @@ import Combine
 import CoreData
 
 class APIService: APIProvider {
+    private let session: URLSession
     private let decoder = JSONDecoder()
     private let endpoint = "https://pokeapi.co/api/v2/"
     private let imagesEndpoint = """
         https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/
     """.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    init() {
+    init(session: URLSession = .shared) {
+        self.session = session
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
 
@@ -72,7 +74,7 @@ class APIService: APIProvider {
 
     private func createTaskPublisher(for query: String) -> AnyPublisher<Data, Error> {
         guard let url = URL(string: query) else { return Fail(error: APIError.badRequest).eraseToAnyPublisher() }
-        return URLSession.shared.dataTaskPublisher(for: url)
+        return session.dataTaskPublisher(for: url)
             .tryMap { data, response in
                 guard let httpResponse = response as? HTTPURLResponse else { throw APIError.badResponse }
                 guard httpResponse.statusCode == 200 else {
