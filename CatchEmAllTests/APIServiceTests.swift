@@ -91,7 +91,7 @@ class APIServiceTests: XCTestCase {
         URLProtocolStub.error = URLError(.notConnectedToInternet)
 
         service.fetchPokemonImage(byID: 1)
-            .sink{ data in
+            .sink { data in
                 XCTAssertEqual(data, Data())
                 expectation.fulfill()
             }

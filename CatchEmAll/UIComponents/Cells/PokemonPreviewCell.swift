@@ -26,12 +26,12 @@ class PokemonPreviewCell: UICollectionViewCell, ReuseIdentifiable {
         imageSubscription?.cancel()
     }
 
-    func setPokemon(_ pokemon: PokemonLight, imagePublisher: AnyPublisher<UIImage, Never>) {
+    func setPokemon(_ pokemon: PokemonLight, imagePublisher: AnyPublisher<Data, Never>) {
         name.text = pokemon.name.capitalized
         summary.text = pokemon.abilities.joined(separator: ", ")
         imageSubscription = imagePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] pokemonImage in self?.image.image = pokemonImage }
+            .sink { [weak self] imageData in self?.image.image = UIImage(data: imageData) ?? .pokeball }
     }
 
     private func configure() {

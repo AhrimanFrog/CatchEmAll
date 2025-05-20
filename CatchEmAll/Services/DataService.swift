@@ -1,11 +1,11 @@
 import Combine
-import UIKit
+import Foundation
 
-class DataService<API: APIProvider, DB: DBProvider>: DataProvider {
-    private let apiProvider: API
-    private let dbProvider: DB
+class DataService: DataProvider {
+    private let apiProvider: APIProvider
+    private let dbProvider: DBProvider
 
-    init(apiProvider: API, dbProvider: DB) {
+    init(apiProvider: APIProvider, dbProvider: DBProvider) {
         self.apiProvider = apiProvider
         self.dbProvider = dbProvider
     }

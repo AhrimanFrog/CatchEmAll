@@ -60,7 +60,6 @@ class AllPokemonsCollection<
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let items = itemProvider.items.value as? [PokemonLight] else { return }
-        let image = (cellForItem(at: indexPath) as? PokemonPreviewCell)?.image.image ?? .pokeball
-        itemProvider.navigationDispatcher.onItemSelect(image, items[indexPath.item].id)
+        itemProvider.navigationDispatcher.onItemSelect(items[indexPath.item].id)
     }
 }

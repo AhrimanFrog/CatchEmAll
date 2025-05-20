@@ -53,7 +53,6 @@ class InfoTable<DataProvider: CollectionItemsProvider & SectionSelectable>: UITa
             return
         }
         let selectedID = UInt(items[indexPath.row].name) ?? 0
-        let image = (tableView.cellForRow(at: indexPath) as? EvolutionCell)?.image.image ?? .pokeball
-        itemProvider.navigationDispatcher.onItemSelect(image, selectedID)
+        itemProvider.navigationDispatcher.onItemSelect(selectedID)
     }
 }

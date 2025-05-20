@@ -5,11 +5,11 @@ import CoreData
 class Coordinator {
     enum Screen {
         case start
-        case detail(UIImage, UInt)
+        case detail(UInt)
     }
 
     let navigationController = UINavigationController()
-    private let dataService: DataService<APIService, DatabaseService>
+    private let dataService: DataService
     private var startingController: UIViewController?
 
     private var persistentContainer: NSPersistentContainer = {
@@ -43,12 +43,12 @@ class Coordinator {
         case .start:
             guard let startingController else { return }
             navigationController.popToViewController(startingController, animated: true)
-        case let .detail(image, pokemonID):
-            showPokemonDetail(for: pokemonID, withImage: image)
+        case let .detail(pokemonID):
+            showPokemonDetail(for: pokemonID)
         }
     }
 
-    func showPokemonDetail(for pokemonID: UInt, withImage image: UIImage) {
+    func showPokemonDetail(for pokemonID: UInt) {
         if let existingVC = navigationController.viewControllers.first(where: { viewController in
             return pokemonID == ((viewController as? PokemonDetail)?.viewModel.pokemon?.id ?? 0)
         }) {
@@ -59,9 +59,7 @@ class Coordinator {
                 pokemonID: pokemonID,
                 navigationDispatcher: newNavigationDispatcher()
             )
-            navigationController.pushViewController(
-                PokemonDetail(viewModel: viewModel, pokemonImage: image), animated: true
-            )
+            navigationController.pushViewController(PokemonDetail(viewModel: viewModel), animated: true)
         }
     }
 
@@ -75,7 +73,7 @@ class Coordinator {
 
     private func newNavigationDispatcher() -> NavigationDispatcher {
         return NavigationDispatcher(
-            onItemSelect: { [weak self] in self?.navigate(toScreen: .detail($0, $1)) },
+            onItemSelect: { [weak self] in self?.navigate(toScreen: .detail($0)) },
             onErrorOccur: { [weak self] in self?.displayError($0) }
         )
     }

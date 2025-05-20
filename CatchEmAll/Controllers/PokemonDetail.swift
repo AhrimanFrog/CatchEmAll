@@ -29,11 +29,10 @@ class PokemonDetail: UIViewController {
     let viewModel: PokemonDetailViewModel
     private var subscriptions = Set<AnyCancellable>()
 
-    init(viewModel: PokemonDetailViewModel, pokemonImage: UIImage) {
+    init(viewModel: PokemonDetailViewModel) {
         self.viewModel = viewModel
         self.infoTable = .init(itemProvider: viewModel)
         super.init(nibName: nil, bundle: nil)
-        image.image = pokemonImage
         configure()
         setConstraints()
         bind()
@@ -45,6 +44,10 @@ class PokemonDetail: UIViewController {
 
     private func bind() {
         segmentedControl.addTarget(self, action: #selector(updateTable), for: .valueChanged)
+        viewModel.getMainImage()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] imageData in self?.image.image = UIImage(data: imageData) ?? .pokeball }
+            .store(in: &subscriptions)
         viewModel.$pokemon
             .receive(on: DispatchQueue.main)
             .sink { [weak self] pokemon in

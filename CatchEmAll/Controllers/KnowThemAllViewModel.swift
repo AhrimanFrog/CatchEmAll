@@ -1,5 +1,5 @@
 import Combine
-import UIKit
+import Foundation
 import os
 
 class KnowThemAllViewModel: CollectionItemsProvider {
@@ -59,9 +59,7 @@ class KnowThemAllViewModel: CollectionItemsProvider {
             .store(in: &subscriptions)
     }
 
-    func getCellImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
+    func getCellImage(byID id: UInt) -> AnyPublisher<Data, Never> {
         return dataProvider.getPokemonImage(byID: id)
-            .map { UIImage(data: $0) ?? .pokeball }
-            .eraseToAnyPublisher()
     }
 }

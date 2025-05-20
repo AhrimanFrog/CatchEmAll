@@ -1,5 +1,5 @@
 import Combine
-import UIKit
+import Foundation
 
 class PokemonDetailViewModel: CollectionItemsProvider, SectionSelectable {
     private let dataProvider: DataProvider
@@ -37,10 +37,12 @@ class PokemonDetailViewModel: CollectionItemsProvider, SectionSelectable {
             .store(in: &subscriptions)
     }
 
-    func getCellImage(byID id: UInt) -> AnyPublisher<UIImage, Never> {
-        dataProvider.getPokemonImage(byID: id)
-            .map { UIImage(data: $0) ?? .pokeball }
-            .eraseToAnyPublisher()
+    func getMainImage() -> AnyPublisher<Data, Never> {
+        return dataProvider.getPokemonImage(byID: pokemonID)
+    }
+
+    func getCellImage(byID id: UInt) -> AnyPublisher<Data, Never> {
+        return dataProvider.getPokemonImage(byID: id)
     }
 
     func updateDataIfNeeded(with sectionIndex: UInt) {

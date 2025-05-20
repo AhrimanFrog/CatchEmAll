@@ -20,11 +20,11 @@ class EvolutionCell: UITableViewCell, ReuseIdentifiable {
         bodyLabel.text = ""
     }
 
-    func setData(text: String, imagePublisher: AnyPublisher<UIImage, Never>) {
+    func setData(text: String, imagePublisher: AnyPublisher<Data, Never>) {
         bodyLabel.text = text
         imageSubscription = imagePublisher
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] image in self?.image.image = image }
+            .sink { [weak self] imageData in self?.image.image = UIImage(data: imageData) ?? .pokeball }
     }
 
     required init?(coder: NSCoder) {
